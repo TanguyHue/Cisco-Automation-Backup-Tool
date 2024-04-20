@@ -1,8 +1,9 @@
 import curses
 
 class ListeAvecCases:
-    def __init__(self, items, one_checked=False, default_value=False):
+    def __init__(self, items, text='', one_checked=False, default_value=False):
         self.items = items
+        self.text = text + "\n\n"
         self.checked = [default_value] * len(items)
         self.selected_index = 0
         self.one_checked = one_checked
@@ -39,7 +40,7 @@ class ListeAvecCases:
         curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
         while True:
             stdscr.clear()
-            stdscr.addstr(0, 0, "Liste des appareils détectés\n\n")
+            stdscr.addstr(0, 0, self.text)
             self.afficher(stdscr)
             stdscr.addstr(len(self.items) + 3, 0, "Appuyez sur espace pour cocher/décocher, ou Entrée pour valider.")
             key = stdscr.getch()

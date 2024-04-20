@@ -12,10 +12,8 @@ class interfaces:
                 ipv4_address = ipv4_info[0]['addr']
                 netmask = ipv4_info[0]['netmask']
                 if ipv4_info[0].get('broadcast') is not None:
-                    broadcast = ipv4_info[0]['broadcast']
                     self.interface_address.append(
-                        interface(interface_name, ipv4_address, broadcast,
-                                  netmask))
+                        interface(interface_name, ipv4_address, netmask))
     
     def get_interface(self, interface_name):
         for interface in self.interface_address:

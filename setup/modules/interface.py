@@ -19,7 +19,7 @@ class interface:
                                      strict=False).network_address
     
     def get_text(self):
-        return f"{self.interface_name}: Network {self.get_network_address()} | IP Address {self.ipv4_address} | Broadcast {self.broadcast}"
+        return f"{self.interface_name}: Network {self.get_network_address()}/{self.get_cidr()} | IP Address {self.ipv4_address}"
     
     def get_address(self):
         return self.ipv4_address
