@@ -13,14 +13,14 @@ class ListeAvecCases:
             checked = 'X' if self.checked[i] else ' '
             if self.one_checked:
                 if i == self.selected_index:
-                    stdscr.addstr(f"> [{checked}] {item['text']}\n", curses.color_pair(1))
+                    stdscr.addstr(f"> [{checked}] {item.get_text()}\n", curses.color_pair(1))
                 else:
-                    stdscr.addstr(f"  [{checked}] {item['text']}\n")
+                    stdscr.addstr(f"  [{checked}] {item.get_text()}\n")
             else:
                 if i == self.selected_index:
-                    stdscr.addstr(f"> ({checked}) {item['text']}\n", curses.color_pair(1))
+                    stdscr.addstr(f"> ({checked}) {item.get_text()}\n", curses.color_pair(1))
                 else:
-                    stdscr.addstr(f"  ({checked}) {item['text']}\n")
+                    stdscr.addstr(f"  ({checked}) {item.get_text()}\n")
 
     def cocher_decocher(self, index):
         if self.one_checked:

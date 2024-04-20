@@ -1,33 +1,18 @@
 import sys
-sys.path.append("..")
+sys.path.append("../..")
 
-from modules.save import saver
+from setup.modules.save import saver
+from setup.modules.interface import interface
+from setup.modules.device import device
 
 if __name__ == "__main__":
-    setup = {
-        "interface": "eth0",
-        "network": "192.168.1.0",
-        "mask": "255.255.255.0",
-        "ip": "192.168.1.2",
-
-        "devices_list_location": "../../data/devices.json",
-        "backup_location": "../../data/backup.json",
-
-        "deamon_active": False,
-        "save_delay": 5
-    }
-    saver().save_setup(setup)
+    interface_1 = interface("eth0", "192.168.1.0", "255.255.255.0")
+    saving = saver('./data_test/setup_file.json', './data_test/devices.json')
+    saving.save_setup(interface_1)
 
     devices = [
-            {
-                "name": "device1",
-                "ip": "192.168.1.3",
-                "mac": "00:00:00:00:00:01"
-            },
-            {
-                "name": "device2",
-                "ip": "192.168.1.4",
-                "mac": "00:00:00:00:00:02"
-            }
+            device("192.168.1.2", "00:00:00:00:00:02"),
+            device("192.168.1.3", "00:00:00:00:00:03"),
+            device("192.168.1.4", "00:00:00:00:00:04"),
         ]
-    saver().save_devices(devices)
+    saving.save_devices(devices)

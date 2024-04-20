@@ -2,6 +2,7 @@ import scapy.all as scapy
 import time
 import threading
 import os
+from setup.modules.device import device
 
 class scanner:
     def __init__(self, ip = "192.168.8.175/24") -> None:
@@ -29,8 +30,7 @@ class scanner:
         answered_list = scapy.srp(arp_request_broadcast, timeout=1, verbose=False)[0]
 
         for element in answered_list:
-            result = {"ip": element[1].psrc, "mac": element[1].hwsrc, "text": f"{element[1].psrc} ({element[1].hwsrc})"}
-            self.results.append(result)
+            self.results.append(device(element[1].psrc, element[1].hwsrc))
         
         self.scan_terminé = True    # Arrêter l'affichage en attente
         thread.join()

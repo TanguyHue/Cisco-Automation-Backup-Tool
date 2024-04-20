@@ -1,12 +1,12 @@
 import sys
-sys.path.append("..")
+sys.path.append("../..")
 
 import curses
-from modules.list_interface import interfaces
-from modules.list import ListeAvecCases
+from setup.modules.list_interface import interfaces
+from setup.modules.list import ListeAvecCases
 
 if __name__ == "__main__":
     liste = ListeAvecCases(interfaces().interface_address, True, False)
     curses.wrapper(liste.executer)
-    selected_interfaces = [interface['interface'] for interface, checked in zip(liste.items, liste.checked) if checked]
+    selected_interfaces = [interface.get_name() for interface, checked in zip(liste.items, liste.checked) if checked]
     print("Interfaces sélectionnées:", selected_interfaces)

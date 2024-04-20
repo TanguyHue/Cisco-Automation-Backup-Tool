@@ -1,5 +1,9 @@
-__pycache__
-test_unitaire
+# files python
 .env
+__pycache__
 
+# setup and data files
 *.json
+
+# unit test
+test_unitaire
