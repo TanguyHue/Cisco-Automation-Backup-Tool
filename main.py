@@ -53,4 +53,5 @@ if __name__ == '__main__':
     
     # Sauvegarde des appareils
     backupFile = backup("./data/backup", "./data/devices.json")
+    backupFile.reset()
     backupFile.save()
