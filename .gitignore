@@ -5,5 +5,5 @@ __pycache__
 # setup and data files
 *.json
 
-# unit test
+# test
 test_unitaire

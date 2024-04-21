@@ -3,6 +3,7 @@ from setup.modules.list_interface import interfaces
 from setup.modules.list_scan import scanner
 from setup.modules.save import saver
 from deamon.modules.deamon import stop_daemon
+from backup.modules.backup import backup
 import os
 import curses
 
@@ -48,3 +49,8 @@ if __name__ == '__main__':
                     "is_active": False,
                 }
         saver().save_setup(selected_interfaces, deamon)
+        print("Configuration enregistrée")
+    
+    # Sauvegarde des appareils
+    backupFile = backup("./data/backup", "./data/devices.json")
+    backupFile.save()

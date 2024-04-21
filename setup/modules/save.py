@@ -6,7 +6,7 @@ class saver:
         self.devices_file = devices_file
 
     def save_setup(self, interface, deamon, delay=5, 
-                   device_location="./data/devices.json", backup_location="./data/backup.json"):
+                   device_location="./data/devices.json", backup_location="./data/backup/"):
         setup = {
             "interface": interface.get_json(),
 
@@ -16,6 +16,7 @@ class saver:
             "deamon": deamon,
             "save_delay": delay
         }
+        
         with open(self.setup_file, 'w') as f:
             json.dump(setup, f, indent=4)
 
