@@ -11,7 +11,6 @@ class backup:
 
     def save(self):
         devices = json.load(open(self.devices_location, 'r'))
-        print(devices)
 
         if not os.path.exists(self.location):
             os.makedirs(self.location, mode = 0o777, exist_ok=True)

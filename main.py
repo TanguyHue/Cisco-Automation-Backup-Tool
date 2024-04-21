@@ -48,7 +48,19 @@ if __name__ == '__main__':
                 deamon = {
                     "is_active": False,
                 }
-        saver().save_setup(selected_interfaces, deamon)
+
+        response = -1
+        while response < 0 or response > 24:
+            response = (input("Quels délais entre chaque récupération des données (en heures) (Par défaut, à 5) ? (1-24) "))
+            if response == '':
+                response = 5
+            else:
+                try:
+                    response = int(response)
+                except ValueError:
+                    response = -1
+
+        saver().save_setup(selected_interfaces, deamon, response)
         print("Configuration enregistrée")
     
     # Sauvegarde des appareils
