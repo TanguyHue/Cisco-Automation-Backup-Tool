@@ -2,10 +2,12 @@ from setup.modules.list import ListeAvecCases as list
 from setup.modules.list_interface import interfaces
 from setup.modules.list_scan import scanner
 from setup.modules.save import saver
+from setup.modules.liste_type import deviceType
 from deamon.modules.deamon import stop_daemon
 from backup.modules.backup import backup
 import os
 import curses
+import json
 
 if __name__ == '__main__':
     init = True
@@ -48,6 +50,32 @@ if __name__ == '__main__':
                 deamon = {
                     "is_active": False,
                 }
+
+        response = 0
+        while response not in ['o', 'n']:
+            response = input("Le nom d'utilisateur et le mot de passe sont-ils identiques pour tous les appareils ? (o/n) ")
+            if response == 'o':
+                same = True
+                username = input(f"Nom d'utilisateur: ")
+                password = input(f"Mot de passe: ")
+            if response == 'n':
+                same = False
+
+        devices = json.load(open("./data/devices.json"))
+        for device in devices:
+            list_type = list(deviceType().type_available, f"Type de l\'appareil {device['ip']}", True, False)
+            if not same:
+                username = input(f"Nom d'utilisateur pour {device['ip']} ({device['mac']}) ? ")
+                password = input(f"Mot de passe pour {device['ip']} ({device['mac']}) ? ") 
+
+            curses.wrapper(list_type.executer)
+            selected_type = [type for type, checked in zip(list_type.items, list_type.checked) if checked][0]
+            device['type'] = selected_type.get_type()
+            device['username'] = username
+            device['password'] = password
+    
+        json.dump(devices, open("./data/devices.json", 'w'), indent=4)
+
 
         response = -1
         while response < 0 or response > 24:

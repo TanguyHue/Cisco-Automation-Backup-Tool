@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Cisco IOS",
+        "value": "cisco_ios"
+    },
+    {
+        "name": "Cisco IOS-XE",
+        "value": "cisco_ios_xe"
+    },
+    {
+        "name": "Cisco IOS-XR",
+        "value": "cisco_ios_xr"
+    },
+    {
+        "name": "Cisco NX-OS",
+        "value": "cisco_nxos"
+    },
+    {
+        "name": "Cisco SG300",
+        "value": "cisco_sg300"
+    },
+    {
+        "name": "Other",
+        "value": "other"
+    }
+]
