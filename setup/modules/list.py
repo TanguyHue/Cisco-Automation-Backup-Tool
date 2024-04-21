@@ -14,9 +14,9 @@ class ListeAvecCases:
             checked = 'X' if self.checked[i] else ' '
             if self.one_checked:
                 if i == self.selected_index:
-                    stdscr.addstr(f"> [{checked}] {item.get_text()}\n", curses.color_pair(1))
+                    stdscr.addstr(f"> {item.get_text()}\n", curses.color_pair(1))
                 else:
-                    stdscr.addstr(f"  [{checked}] {item.get_text()}\n")
+                    stdscr.addstr(f"  {item.get_text()}\n")
             else:
                 if i == self.selected_index:
                     stdscr.addstr(f"> ({checked}) {item.get_text()}\n", curses.color_pair(1))
@@ -46,9 +46,14 @@ class ListeAvecCases:
             key = stdscr.getch()
             if (key == curses.KEY_ENTER or key in [10, 13])  and (not self.one_checked or self.prev_selected_index) is not None:
                 break
+            if (key == curses.KEY_ENTER or key in [10, 13] or key == ord(' ')) and self.one_checked:
+                self.cocher_decocher(self.selected_index)
+                break
             elif key == curses.KEY_DOWN:
                 self.selected_index = (self.selected_index + 1) % len(self.items)
             elif key == curses.KEY_UP:
                 self.selected_index = (self.selected_index - 1) % len(self.items)
             elif key == ord(' '):
                 self.cocher_decocher(self.selected_index)
+                if self.one_checked:
+                    break

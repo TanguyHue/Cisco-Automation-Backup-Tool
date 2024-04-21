@@ -1,4 +1,5 @@
 import menu.conf as conf
+import menu.scan as scan
 from menu.list_menu import menu_list
 from setup.modules.save import saver
 from setup.modules.list import ListeAvecCases as list
@@ -17,6 +18,9 @@ if __name__ == '__main__':
             case 0:
                 print("Configuration")
                 conf.main()
+            case 2:
+                print("Scan")
+                scan.main()
             case 4:
                 print("Au revoir")
             case default:
