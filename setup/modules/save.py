@@ -5,14 +5,15 @@ class saver:
         self.setup_file = setup_file
         self.devices_file = devices_file
 
-    def save_setup(self, interface, deamon=False, delay=5, device_location="./devices.json", backup_location="./backup.json"):
+    def save_setup(self, interface, deamon, delay=5, 
+                   device_location="./data/devices.json", backup_location="./data/backup.json"):
         setup = {
             "interface": interface.get_json(),
 
             "devices_list_location": device_location,
             "backup_location": backup_location,
 
-            "deamon_active": deamon,
+            "deamon": deamon,
             "save_delay": delay
         }
         with open(self.setup_file, 'w') as f:
@@ -22,3 +23,11 @@ class saver:
         devices = [device.get_info() for device in devices]
         with open(self.devices_file, 'w') as f:
             json.dump(devices, f, indent=4)
+
+    def is_configured(self):
+        try:
+            with open(self.setup_file, 'r') as f:
+                setup = json.load(f)
+                return True
+        except FileNotFoundError:
+            return False
