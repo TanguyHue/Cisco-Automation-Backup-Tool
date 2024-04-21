@@ -4,7 +4,8 @@ __pycache__
 
 # setup and data files
 *.json
-!type_available.json
+!type_available.json*
+!menu.json
 
 # test
 test_unitaire

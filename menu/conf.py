@@ -96,5 +96,6 @@ def main():
     backupFile.reset()
     backupFile.save()
 
-    os.system("clear")
     print("Configuration terminée")
+    input("Appuyez sur entrée pour continuer...")
+    os.system("clear")

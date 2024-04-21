@@ -1,0 +1,22 @@
+[
+    {
+        "titre": "Configuration",
+        "value": 0
+    },
+    {
+        "titre": "Liste des appareils",
+        "value": 1
+    },
+    {
+        "titre": "Faire un nouveau scan",
+        "value": 2
+    },
+    {
+        "titre": "Liste des enregistrements",
+        "value": 3
+    },
+    {
+        "titre": "Quitter",
+        "value": 4
+    }
+]
