@@ -25,16 +25,17 @@ class backup:
             name = device['mac'].replace(':', '-')
             print(f"Test de ping à {name} | {device['ip']}")
             os.makedirs(f"{self.location}/{name}", mode = 0o777, exist_ok=True)
-            os.system(f"ping -c 1 {device['ip']} > {self.location}/{name}/ping.txt")
+            os.system(f"ping -c 3 {device['ip']} > {self.location}/{name}/ping.txt")
 
             with open(f"{self.location}/{name}/ping.txt", 'r') as f:
-                if "1 packets transmitted, 1 received" in f.read():
-                    print("Ping réussi")
-                    successful_devices.append(device)
-                else:
+                if "100% packet loss" in f.read():
                     print("Ping échoué")
                     print("Suppression de l'appareil")
                     os.system(f"rm -rf {self.location}/{name}")
+                else:
+                    print("Ping réussi")
+                    successful_devices.append(device)
+
         
         with open(self.devices_location, 'w') as f:
             json.dump(successful_devices, f, indent=4)
