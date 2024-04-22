@@ -26,7 +26,7 @@ def list_device(interface):
     if devices.__len__() > 20:
         print("Trop d'appareils trouvés sur le réseau, seuls les 20 premiers sont affichés.")
         input("Appuyez sur entrée pour continuer...")
-        devices.sort(key=lambda x: int(x.get_ip().replace(".", "")))
+        devices.sort(key=lambda x: tuple(int(part) for part in x.get_ip().split('.')))
         devices = devices[:20]
     liste = list(devices, 'Liste des appareils sur le réseau', False, True)
     curses.wrapper(liste.executer)
