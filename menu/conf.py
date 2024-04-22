@@ -19,7 +19,16 @@ def list_int():
 
 def list_device(interface):
     # Scanner le réseau
-    liste = list(scanner(f"{interface.get_address()}/{interface.get_cidr()}").scan(), 'Liste des appareils sur le réseau', False, True)
+    devices = scanner(f"{interface.get_address()}/{interface.get_cidr()}").scan()
+    if devices.__len__() == 0:
+        print("Aucun appareil trouvé sur le réseau")
+        return
+    if devices.__len__() > 20:
+        print("Trop d'appareils trouvés sur le réseau, seuls les 20 premiers sont affichés.")
+        input("Appuyez sur entrée pour continuer...")
+        devices.sort(key=lambda x: int(x.get_ip().replace(".", "")))
+        devices = devices[:20]
+    liste = list(devices, 'Liste des appareils sur le réseau', False, True)
     curses.wrapper(liste.executer)
     selected_devices = [device for device, checked in zip(liste.items, liste.checked) if checked]
     print("Appareils enregistrés")

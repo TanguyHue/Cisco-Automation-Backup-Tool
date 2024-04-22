@@ -14,6 +14,9 @@ class device:
             "ip": self.ip,
             "mac": self.mac
         }
+    
+    def get_ip(self):
+        return self.ip
 
     def set_info(self, type, username, password):
         self.type = type

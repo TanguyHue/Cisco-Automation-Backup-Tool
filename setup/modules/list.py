@@ -10,6 +10,9 @@ class ListeAvecCases:
         self.prev_selected_index = None
 
     def afficher(self, stdscr):
+        if self.items == []:
+            stdscr.addstr("Aucun élément à afficher.")
+            return
         for i, item in enumerate(self.items):
             checked = 'X' if self.checked[i] else ' '
             if self.one_checked:

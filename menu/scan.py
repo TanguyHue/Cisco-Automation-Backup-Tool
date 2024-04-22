@@ -1,3 +1,5 @@
+import os
+from backup.modules.backup import backup
 from menu.conf import list_device, conf_devices
 from setup.modules.interface import interface
 from setup.modules.save import saver
@@ -10,3 +12,11 @@ def main():
     devices = list_device(interface_object)
     saver().save_devices(devices)
     conf_devices()
+
+    backupFile = backup("./data/backup", "./data/devices.json")
+    backupFile.reset()
+    backupFile.save()
+
+    print("Scan terminée")
+    input("Appuyez sur entrée pour continuer...")
+    os.system("clear")
