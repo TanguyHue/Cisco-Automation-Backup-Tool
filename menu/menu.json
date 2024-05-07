@@ -4,19 +4,19 @@
         "value": 0
     },
     {
-        "titre": "Liste des appareils",
+        "titre": "List of devices",
         "value": 1
     },
     {
-        "titre": "Faire un nouveau scan",
+        "titre": "Do a new scan",
         "value": 2
     },
     {
-        "titre": "Liste des enregistrements",
+        "titre": "List of saves",
         "value": 3
     },
     {
-        "titre": "Quitter",
+        "titre": "Quit",
         "value": 4
     }
 ]

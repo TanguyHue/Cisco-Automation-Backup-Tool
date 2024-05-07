@@ -17,6 +17,6 @@ def main():
     backupFile.reset()
     backupFile.save()
 
-    print("Scan terminée")
-    input("Appuyez sur entrée pour continuer...")
+    print("Scan finished")
+    input("Press enter to continue...")
     os.system("clear")
