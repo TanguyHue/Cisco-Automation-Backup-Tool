@@ -25,12 +25,12 @@ class backup:
 
         for device in devices:
             name = device['mac'].replace(':', '-')
-            print(f"Test de ping à {name} | {device['ip']}")
+            print(f"Test of pinging {name} | {device['ip']}")
             self.ping_terminé = False
             def afficher_attente():
                 while True and not self.ping_terminé:
                     for i in range(3):
-                        print("Ping retour en attente" + "." * (i + 1), end="\r")
+                        print("Waiting ping response" + "." * (i + 1), end="\r")
                         time.sleep(0.4)
                         print("\033[K", end="")
             
@@ -44,12 +44,12 @@ class backup:
             with open(f"{self.location}/{name}/ping.txt", 'r') as f:
                 if "100% packet loss" in f.read():
                     print("\033[K", end="")
-                    print("Ping échoué")
-                    print("Suppression de l'appareil")
+                    print("Ping failed")
+                    print("Device deleted")
                     os.system(f"rm -rf {self.location}/{name}")
                 else:
                     print("\033[K", end="")
-                    print("Ping réussi")
+                    print("Ping success")
                     successful_devices.append(device)
             
             self.ping_terminé = True    # Arrêter l'affichage en attente

@@ -15,7 +15,7 @@ class scanner:
         def afficher_attente():
             while True and not self.scan_terminé:
                 for i in range(3):
-                    print("Scan en cours" + "." * (i + 1), end="\r")
+                    print("Scan still running" + "." * (i + 1), end="\r")
                     time.sleep(0.4)
                     print("\033[K", end="")
         

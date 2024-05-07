@@ -10,7 +10,7 @@ if __name__ == '__main__':
     if not saver().is_configured():
         conf.main()
     
-    liste = list(menu_list().item_menu, 'Menu principal', True, False)
+    liste = list(menu_list().item_menu, 'Main Menu', True, False)
     curses.wrapper(liste.executer)
     selected_item = [item for item, checked in zip(liste.items, liste.checked) if checked][0].get_value()
 
@@ -20,16 +20,16 @@ if __name__ == '__main__':
                 print("Configuration")
                 conf.main()
             case 1:
-                print("Liste des appareils")
+                print("List of devices")
                 list_device()
             case 2:
                 print("Scan")
                 scan.main()
             case 4:
-                print("Au revoir")
+                print("Goodbye")
             case default:
-                print("Non implémenté")
-        liste = list(menu_list().item_menu, 'Menu principal', True, False)
+                print("Not implemented yet")
+        liste = list(menu_list().item_menu, 'Main Menu', True, False)
         curses.wrapper(liste.executer)
         selected_item = [item for item, checked in zip(liste.items, liste.checked) if checked][0].get_value()   
          
