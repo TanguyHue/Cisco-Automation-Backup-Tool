@@ -1,0 +1,29 @@
+hostname Switch1
+
+vlan 1
+ name Management
+vlan 2
+ name DataVLAN
+
+interface FastEthernet0/1
+ switchport mode access
+ switchport access vlan 2
+
+interface FastEthernet0/2
+ switchport mode access
+ switchport access vlan 1
+
+interface Vlan1
+ ip address 192.168.1.2 255.255.255.0
+ no shutdown
+
+enable secret 5 $1$u7p9$3VqF5b5D3EgQ9T7ZdlxvC0
+line vty 0 4
+ login
+ password cisco
+line console 0
+ login
+ password cisco
+
+end
+write memory
