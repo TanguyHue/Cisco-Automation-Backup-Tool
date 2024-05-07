@@ -11,7 +11,7 @@ class ListeAvecCases:
 
     def afficher(self, stdscr):
         if self.items == []:
-            stdscr.addstr("Aucun élément à afficher.")
+            stdscr.addstr("No item to display.")
             return
         for i, item in enumerate(self.items):
             checked = 'X' if self.checked[i] else ' '
@@ -45,7 +45,10 @@ class ListeAvecCases:
             stdscr.clear()
             stdscr.addstr(0, 0, self.text)
             self.afficher(stdscr)
-            stdscr.addstr(len(self.items) + 3, 0, "Appuyez sur espace pour cocher/décocher, ou Entrée pour valider.")
+            if self.one_checked:
+                stdscr.addstr(len(self.items) + 3, 0, "Press 'Enter' to validate.")
+            else:
+                stdscr.addstr(len(self.items) + 3, 0, "Press 'Space' to check/uncheck an item, 'Enter' to validate.")
             key = stdscr.getch()
             if (key == curses.KEY_ENTER or key in [10, 13])  and (not self.one_checked or self.prev_selected_index) is not None:
                 break

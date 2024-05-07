@@ -22,17 +22,17 @@ def load(path="./data/devices.json"):
 
 def menu_list(devices):
     quit = []
-    quit.append(option_type("Quitter"))
-    liste = list(devices + quit, 'Liste des appareils', True, False)
+    quit.append(option_type("Quit"))
+    liste = list(devices + quit, 'List of devices', True, False)
     curses.wrapper(liste.executer)
     selected_device = [device for device, checked in zip(liste.items, liste.checked) if checked][0]
     return selected_device
 
 def menu_item(device):
     options = [
-        "Modifier",
-        "Supprimer",
-        "Retour"
+        "Edit",
+        "Delete",
+        "Back"
     ]
     liste = list([option_type(option) for option in options], device.get_text(), True, False)
     curses.wrapper(liste.executer)
@@ -41,17 +41,17 @@ def menu_item(device):
 
 def modifier(device_mod):
     os.system("clear")
-    print(f"Modifier l'appareil: {device_mod.get_text()}")
-    print("Laisser vide pour ne pas modifier")
+    print(f"Edit the device: {device_mod.get_text()}")
+    print("Press enter to keep the same value")
 
-    new_username = input(f"Nom d'utilisateur pour {device_mod.get_ip()} ? ({device_mod.get_username()})")
+    new_username = input(f"Username for {device_mod.get_ip()} ? ({device_mod.get_username()})")
     if new_username == "":
         new_username = device_mod.get_username()
-    new_password = input(f"Mot de passe pour {device_mod.get_ip()} ? ({device_mod.get_password()})") 
+    new_password = input(f"Password for {device_mod.get_ip()} ? ({device_mod.get_password()})") 
     if new_password == "":
         new_password = device_mod.get_password()
 
-    list_type = list(deviceType().type_available, f"Type de l\'appareil {device_mod.get_ip()} ({device_mod.get_type_name()})", True, False)
+    list_type = list(deviceType().type_available, f"Type fo device {device_mod.get_ip()} ({device_mod.get_type_name()})", True, False)
     curses.wrapper(list_type.executer)
     selected_type = [type for type, checked in zip(list_type.items, list_type.checked) if checked][0]
     new_type = selected_type.get_type()
@@ -72,12 +72,12 @@ def delete(device_delete):
 def main():
     devices = load()
     selected_device = menu_list(devices)
-    while selected_device.get_text() != "Quitter":
+    while selected_device.get_text() != "Quit":
         selected_option = menu_item(selected_device)
         match selected_option.get_text():
-            case "Modifier":
+            case "Edit":
                 modifier(selected_device)
-            case "Supprimer":
+            case "Delete":
                 delete(selected_device)
         devices = load()
         selected_device = menu_list(devices)
