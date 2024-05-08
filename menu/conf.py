@@ -127,13 +127,13 @@ def main():
         saver().save_setup(selected_interfaces, deamon, delay, devices_location, backup_location)
         print("Configuration saved")
 
-    backupFile = backup(backup_location, devices_location)
-    response = 0
-    while response not in ['y', 'n', '']:
-        response = input("Do you want to erase previous backups ? (y/n) (default: n) ")
-        if response == 'y':
-            backupFile.reset()
-    backupFile.save()
+        backupFile = backup(backup_location, devices_location)
+        response = 0
+        while response not in ['y', 'n', '']:
+            response = input("Do you want to erase previous backups ? (y/n) (default: n) ")
+            if response == 'y':
+                backupFile.reset()
+        backupFile.save()
 
     print("Configuration finished")
     input("Press enter to continue...")
