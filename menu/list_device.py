@@ -17,7 +17,7 @@ def load(path="./data/devices.json"):
         devices_load = json.load(file)
     devices = []
     for device in devices_load:
-        devices.append(device_type(device['ip'], device['mac'], device['type'], device['username'], device['password']))
+        devices.append(device_type(device['ip'], device['mac'], device['type'], device['username'], device['password'], device['enable_password']))
     return devices
 
 def menu_list(devices):
@@ -39,7 +39,7 @@ def menu_item(device):
     selected_option = [device for device, checked in zip(liste.items, liste.checked) if checked][0]
     return selected_option
 
-def modifier(device_mod):
+def modifier(device_mod: device_type):
     os.system("clear")
     print(f"Edit the device: {device_mod.get_text()}")
     print("Press enter to keep the same value")
@@ -50,13 +50,19 @@ def modifier(device_mod):
     new_password = input(f"Password for {device_mod.get_ip()} ? ({device_mod.get_password()})") 
     if new_password == "":
         new_password = device_mod.get_password()
+    print("If the enable password is now blank, you can just press space and enter")
+    new_enable_password = input(f"Enable password for {device_mod.get_ip()} ? ({device_mod.get_enable_password()})")
+    if new_enable_password == "":
+        new_enable_password = device_mod.get_enable_password()
+    elif new_enable_password == " ":
+        new_enable_password = ""
 
     list_type = list(deviceType().type_available, f"Type fo device {device_mod.get_ip()} ({device_mod.get_type_name()})", True, False)
     curses.wrapper(list_type.executer)
     selected_type = [type for type, checked in zip(list_type.items, list_type.checked) if checked][0]
     new_type = selected_type.get_type()
 
-    device_mod.set_info(new_type, new_username, new_password)
+    device_mod.set_info(new_type, new_username, new_password, new_enable_password)
     devices = load()
 
     os.system("clear")

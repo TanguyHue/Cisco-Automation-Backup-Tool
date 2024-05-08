@@ -16,7 +16,11 @@
         "value": 3
     },
     {
-        "titre": "Quit",
+        "titre": "Reset configuration",
         "value": 4
+    },
+    {
+        "titre": "Quit",
+        "value": 5
     }
 ]

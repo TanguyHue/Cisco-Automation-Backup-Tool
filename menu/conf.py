@@ -36,7 +36,7 @@ def active_deamon():
     response=0
     stop_daemon()
     while response not in ['y', 'n', '']:
-        response = input("Do you want to start the daemon ? (y/n) (default: y)")
+        response = input("Do you want to start the daemon ? (y/n) (default: y) ")
         if response == 'y' or response == '':
             deamon = {
                 "is_active": True,
@@ -56,24 +56,35 @@ def conf_devices():
     while response not in ['y', 'n']:
         response = input("Is the username and password the same for all devices ? (y/n) ")
         if response == 'y':
-            same = True
+            sameAccount = True
             username = input("Username: ")
             password = input("Password: ")
         if response == 'n':
-            same = False
+            sameAccount = False
+    response = 0
+    while response not in ['y', 'n']:
+        response = input("Is the enable password the same for all devices ? (y/n) ")
+        if response == 'y':
+            sameEnable = True
+            enablePass = input("Enable password: ")
+        if response == 'n':
+            sameEnable = False
 
     devices = json.load(open("./data/devices.json"))
     for device in devices:
         list_type = list(deviceType().type_available, f"Type of device {device['ip']}", True, False)
-        if not same:
+        if not sameAccount:
             username = input(f"Username for {device['ip']} ({device['mac']}) ? ")
             password = input(f"Password for {device['ip']} ({device['mac']}) ? ") 
+        if not sameEnable:
+            enablePass = input(f"Enable password for {device['ip']} ({device['mac']}) ? ")
 
         curses.wrapper(list_type.executer)
         selected_type = [type for type, checked in zip(list_type.items, list_type.checked) if checked][0]
         device['type'] = selected_type.get_type()
         device['username'] = username
         device['password'] = password
+        device['enable_password'] = enablePass
 
     json.dump(devices, open("./data/devices.json", 'w'), indent=4)
 
@@ -82,7 +93,7 @@ def main():
     if saver().is_configured():
         response = 0
         while response not in ['y', 'n']:
-            response = input("Configuration already exists. Do you want to overwrite it ? (y/n)")
+            response = input("Configuration already exists. Do you want to overwrite it ? (y/n) ")
             if response == 'n':
                 init = False
 
@@ -95,7 +106,7 @@ def main():
 
         response = -1
         while response < 0 or response > 24:
-            response = (input("How often do you want to save the data ? (in hours) (default: 5)"))
+            response = (input("How often do you want to save the data ? (in hours) (default: 5) "))
             if response == '':
                 response = 5
             else:
@@ -105,19 +116,23 @@ def main():
                     response = -1
         
         delay = response
-        response = input("Where do you want to save the backup ? (default: ./data/backup)")
+        response = input("Where do you want to save the backup ? (default: ./data/backup) ")
         if response == '':
             response = "./data/backup"
         backup_location = response
-        response = input("Where do you want to save the devices files ? (default: ./data/devices.json)")
+        response = input("Where do you want to save the devices file ? (default: ./data/devices.json) ")
         if response == '':
             response = "./data/devices.json"
         devices_location = response
         saver().save_setup(selected_interfaces, deamon, delay, devices_location, backup_location)
         print("Configuration saved")
 
-    backupFile = backup("./data/backup", "./data/devices.json")
-    backupFile.reset()
+    backupFile = backup(backup_location, devices_location)
+    response = 0
+    while response not in ['y', 'n', '']:
+        response = input("Do you want to erase previous backups ? (y/n) (default: n) ")
+        if response == 'y':
+            backupFile.reset()
     backupFile.save()
 
     print("Configuration finished")
