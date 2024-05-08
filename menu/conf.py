@@ -1,4 +1,4 @@
-from setup.modules.list import ListeAvecCases as list
+from setup.modules.list import listClass as list
 from setup.modules.list_interface import interfaces
 from setup.modules.list_scan import scanner
 from setup.modules.save import saver

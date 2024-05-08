@@ -2,7 +2,7 @@ import json
 import os
 from time import strptime
 from setup.modules.device import device as device_type
-from setup.modules.list import ListeAvecCases as list
+from setup.modules.list import listClass as list
 from file_comparaison.modules.compare import compareClass
 import curses
 

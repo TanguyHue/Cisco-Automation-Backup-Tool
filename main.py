@@ -4,9 +4,9 @@ import menu.scan as scan
 from menu.list_menu import menu_list
 from menu.list_device import main as list_device
 from menu.list_saves import main as list_saves
-from backup.modules.backup import backup as backup
+from backup.modules.backup import backup
 from setup.modules.save import saver
-from setup.modules.list import ListeAvecCases as list
+from setup.modules.list import listClass as list
 import curses
 
 if __name__ == '__main__':

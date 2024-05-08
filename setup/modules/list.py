@@ -1,6 +1,6 @@
 import curses
 
-class ListeAvecCases:
+class listClass:
     def __init__(self, items, text='', one_checked=False, default_value=False):
         self.items = items
         self.text = text + "\n\n"
