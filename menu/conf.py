@@ -10,7 +10,6 @@ import curses
 import json
 
 def list_int():
-    # Lister interfaces réseaux
     liste = list(interfaces().interface_address, 'List of network interface', True, False)
     curses.wrapper(liste.executer)
     selected_interfaces = [interface for interface, checked in zip(liste.items, liste.checked) if checked][0]
@@ -18,7 +17,6 @@ def list_int():
     return selected_interfaces
 
 def list_device(interface):
-    # Scanner le réseau
     devices = scanner(f"{interface.get_address()}/{interface.get_cidr()}").scan()
     if devices.__len__() == 0:
         print("No devices found on the network.")
@@ -35,7 +33,6 @@ def list_device(interface):
     return selected_devices
 
 def active_deamon():
-    # Enregistrer la configuration
     response=0
     stop_daemon()
     while response not in ['y', 'n', '']:
@@ -82,7 +79,6 @@ def conf_devices():
 
 def main():
     init = True
-    # Vérifier s'il y a déjà un fichier de configuration
     if saver().is_configured():
         response = 0
         while response not in ['y', 'n']:
@@ -119,8 +115,7 @@ def main():
         devices_location = response
         saver().save_setup(selected_interfaces, deamon, delay, devices_location, backup_location)
         print("Configuration saved")
-    
-    # Sauvegarde des appareils
+
     backupFile = backup("./data/backup", "./data/devices.json")
     backupFile.reset()
     backupFile.save()

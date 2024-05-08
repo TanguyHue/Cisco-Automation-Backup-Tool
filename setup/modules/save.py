@@ -28,7 +28,6 @@ class saver:
     def is_configured(self):
         try:
             with open(self.setup_file, 'r') as f:
-                setup = json.load(f)
                 return True
         except FileNotFoundError:
             return False

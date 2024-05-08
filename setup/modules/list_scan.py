@@ -19,7 +19,6 @@ class scanner:
                     time.sleep(0.4)
                     print("\033[K", end="")
         
-        # Démarrer l'affichage en attente en arrière-plan
         thread = threading.Thread(target=afficher_attente)
         thread.daemon = True
         thread.start()
@@ -32,6 +31,6 @@ class scanner:
         for element in answered_list:
             self.results.append(device(element[1].psrc, element[1].hwsrc))
         
-        self.scan_terminé = True    # Arrêter l'affichage en attente
+        self.scan_terminé = True 
         thread.join()
         return self.results

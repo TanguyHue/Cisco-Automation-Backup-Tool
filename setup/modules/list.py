@@ -28,12 +28,9 @@ class ListeAvecCases:
 
     def cocher_decocher(self, index):
         if self.one_checked:
-            # Uncheck the previously selected interface (if any)
             if self.prev_selected_index is not None:
                 self.checked[self.prev_selected_index] = False
-            # Check the newly selected interface
             self.checked[index] = True
-            # Update the previously selected index
             self.prev_selected_index = index
         else:
             self.checked[index] = not self.checked[index]
