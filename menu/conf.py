@@ -107,8 +107,17 @@ def main():
                     response = int(response)
                 except ValueError:
                     response = -1
-
-        saver().save_setup(selected_interfaces, deamon, response)
+        
+        delay = response
+        response = input("Where do you want to save the backup ? (default: ./data/backup)")
+        if response == '':
+            response = "./data/backup"
+        backup_location = response
+        response = input("Where do you want to save the devices files ? (default: ./data/devices.json)")
+        if response == '':
+            response = "./data/devices.json"
+        devices_location = response
+        saver().save_setup(selected_interfaces, deamon, delay, devices_location, backup_location)
         print("Configuration saved")
     
     # Sauvegarde des appareils

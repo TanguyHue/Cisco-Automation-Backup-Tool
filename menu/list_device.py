@@ -65,11 +65,16 @@ def modifier(device_mod):
         json.dump([device.get_full_info() for device in new_devices], file, indent=4)
 
 def delete(device_delete):
-    devices = load()
-    new_devices = [device for device in devices if device.get_mac() != device_delete.get_mac()]
-    with open("./data/devices.json", "w") as file:
-        json.dump([device.get_full_info() for device in new_devices], file, indent=4)
-
+    os.system("clear")
+    response = 0
+    while (response != "y" and response != "n"):
+        response = input("Confirm delete (y/n): ")
+    if response == "y":
+        devices = load()
+        new_devices = [device for device in devices if device.get_mac() != device_delete.get_mac()]
+        with open("./data/devices.json", "w") as file:
+            json.dump([device.get_full_info() for device in new_devices], file, indent=4)
+    os.system("clear")
 
 def main():
     devices = load()
