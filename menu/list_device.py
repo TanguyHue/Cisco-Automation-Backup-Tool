@@ -58,6 +58,8 @@ def modifier(device_mod):
 
     device_mod.set_info(new_type, new_username, new_password)
     devices = load()
+
+    os.system("clear")
     new_devices = [device if device.get_mac() != device_mod.get_mac() else device_mod for device in devices]
     with open("./data/devices.json", "w") as file:
         json.dump([device.get_full_info() for device in new_devices], file, indent=4)

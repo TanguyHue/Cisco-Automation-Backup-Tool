@@ -8,20 +8,20 @@ class compareClass:
     def __init__(self) -> None:
         pass
 
-    def read_files(self, device, backup_number):
+    def read_files(self, device, backup_number, setup_file = "./data/setup_file.json", backup_file = "."):
         try:
-            backup_location = json.load(open("../../data/setup_file.json", "r"))['backup_location']
-            list_files = listdir(f"../../{backup_location}/{device}")
-            list_files = [f"../../{backup_location}{device}/{file}" for file in list_files if file.endswith(".ios")]
+            backup_location = json.load(open(setup_file, "r"))['backup_location']
+            list_files = listdir(f"{backup_file}/{backup_location}/{device}")
+            list_files = [f"{backup_file}/{backup_location}/{device}/{file}" for file in list_files if file.endswith(".ios")]
             list_files = [file.split('/')[-1] for file in list_files if file.split("/")[-1] != "00-00-00"]
         
             def get_date(filename):
                 return strptime(filename[:-4], "%Y-%m-%d-%H-%M-%S")
 
             sorted_files = sorted(list_files, key=get_date, reverse=True)
-            with open(f"../../{backup_location}{device}/{sorted_files[0]}", "r") as f:
+            with open(f"{backup_file}/{backup_location}/{device}/{sorted_files[0]}", "r") as f:
                 self.f1 = f.read()
-            with open(f"../../{backup_location}{device}/{sorted_files[backup_number]}", "r") as f:
+            with open(f"{backup_file}/{backup_location}/{device}/{sorted_files[backup_number]}", "r") as f:
                 self.f2 = f.read()
             curses.wrapper(self.main)
         except FileNotFoundError:
@@ -47,6 +47,9 @@ class compareClass:
         diff_lines = list(diff)[3:]
         filtered_diff = [line for line in diff_lines if not line.startswith("@@")]
 
+        if len(filtered_diff) == 0:
+            filtered_diff = self.f1.splitlines()
+
         index = 0
         max_lines = curses.LINES - 1
         while True:
@@ -64,9 +67,9 @@ class compareClass:
                     break
             
             if len(filtered_diff) > max_lines:
-                stdscr.addstr(curses.LINES - 1, 0, f"Press q to quit | Diff: {index / (len(filtered_diff)- max_lines) * 100:.2f}%", curses.A_REVERSE)
+                stdscr.addstr(curses.LINES - 1, 0, f"Press q to quit | Press u to upload | Diff: {index / (len(filtered_diff)- max_lines) * 100:.2f}%", curses.A_REVERSE)
             else:
-                stdscr.addstr(curses.LINES - 1, 0, "Press q to quit", curses.A_REVERSE)
+                stdscr.addstr(curses.LINES - 1, 0, "Press q to quit | Press u to upload", curses.A_REVERSE)
 
             stdscr.refresh()
             key = stdscr.getch()
@@ -76,4 +79,6 @@ class compareClass:
             elif key == curses.KEY_UP and index > 0:
                 index -= 1
             elif key == ord('q'):
+                self.f1 = None
+                self.f2 = None
                 break

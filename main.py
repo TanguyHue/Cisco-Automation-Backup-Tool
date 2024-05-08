@@ -2,6 +2,7 @@ import menu.conf as conf
 import menu.scan as scan
 from menu.list_menu import menu_list
 from menu.list_device import main as list_device
+from menu.list_saves import main as list_saves
 from setup.modules.save import saver
 from setup.modules.list import ListeAvecCases as list
 import curses
@@ -25,6 +26,9 @@ if __name__ == '__main__':
             case 2:
                 print("Scan")
                 scan.main()
+            case 3:
+                print("List of saves")
+                list_saves()
             case 4:
                 print("Goodbye")
             case default:

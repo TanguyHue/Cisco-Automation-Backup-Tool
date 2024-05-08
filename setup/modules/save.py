@@ -6,7 +6,7 @@ class saver:
         self.devices_file = devices_file
 
     def save_setup(self, interface, deamon, delay=5, 
-                   device_location="./data/devices.json", backup_location="./data/backup/"):
+                   device_location="./data/devices.json", backup_location="./data/backup"):
         setup = {
             "interface": interface.get_json(),
 
