@@ -3,14 +3,19 @@ from difflib import unified_diff
 import json
 from os import listdir
 from time import strptime
+from sys import path
+path.append("../..")
+from setup.modules.save import set_save
 
 class compareClass:
     def __init__(self) -> None:
         pass
 
     def read_files(self, device, backup_number, setup_file = "./data/setup_file.json", backup_file = "."):
+        
         try:
             backup_location = json.load(open(setup_file, "r"))['backup_location']
+            self.devices_list = json.load(open(setup_file, "r"))['devices_list_location']
             list_files = listdir(f"{backup_file}/{backup_location}/{device}")
             list_files = [f"{backup_file}/{backup_location}/{device}/{file}" for file in list_files if file.endswith(".ios")]
             list_files = [file.split('/')[-1] for file in list_files if file.split("/")[-1] != "00-00-00"]
@@ -23,6 +28,7 @@ class compareClass:
                 self.f1 = f.read()
             with open(f"{backup_file}/{backup_location}/{device}/{sorted_files[backup_number]}", "r") as f:
                 self.f2 = f.read()
+            self.backup_selected = f"{backup_file}/{backup_location}/{device}/{sorted_files[backup_number]}"
             curses.wrapper(self.main)
         except FileNotFoundError:
             return None, None
@@ -78,6 +84,9 @@ class compareClass:
                 index += 1
             elif key == curses.KEY_UP and index > 0:
                 index -= 1
+            elif key == ord('u'):
+                set_save(self.backup_selected, self.devices_list)
+                break
             elif key == ord('q'):
                 self.f1 = None
                 self.f2 = None

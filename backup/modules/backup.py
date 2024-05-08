@@ -2,6 +2,7 @@ import os
 import json
 import threading
 import time
+import netmiko
 
 class backup:
     def __init__(self, location, devices_location) -> None:
@@ -34,7 +35,6 @@ class backup:
                         time.sleep(0.4)
                         print("\033[K", end="")
             
-            # Démarrer l'affichage en attente en arrière-plan
             thread = threading.Thread(target=afficher_attente)
             thread.daemon = True
             thread.start()
@@ -52,7 +52,7 @@ class backup:
                     print("Ping success")
                     successful_devices.append(device)
             
-            self.ping_terminé = True    # Arrêter l'affichage en attente
+            self.ping_terminé = True
             thread.join()
 
         
