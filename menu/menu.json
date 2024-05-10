@@ -26,5 +26,9 @@
     {
         "titre": "Remove devices automation from cron",
         "value": 6
+    },
+    {
+        "titre": "Daemon status",
+        "value": 7
     }
 ]

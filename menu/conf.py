@@ -3,7 +3,7 @@ from setup.modules.list_interface import interfaces
 from setup.modules.list_scan import scanner
 from setup.modules.save import saver
 from setup.modules.liste_type import deviceType
-from deamon.modules.deamon import stop_daemon
+from daemon_module.modules.daemonClass import stop_daemon
 from backup.modules.backup import backup
 import os
 import curses
@@ -32,24 +32,24 @@ def list_device(interface):
     print("Devices saved")
     return selected_devices
 
-def active_deamon():
+def active_daemon():
     response=0
     stop_daemon()
     while response not in ['y', 'n', '']:
         response = input("Do you want to start the daemon ? (y/n) (default: y) ")
         if response == 'y' or response == '':
-            deamon = {
+            daemon = {
                 "is_active": True,
-                "deamon_location": "./deamon/modules/deamon.py",
-                "deamon_log": "/tmp/log.txt",
+                "daemon_location": "./daemon/modules/daemon.py",
+                "daemon_log": "/tmp/log.txt",
             }
-            os.system("sudo python3 ./deamon/modules/deamon.py &")
+            os.system("sudo python3 ./daemon/modules/daemon.py &")
             print("Daemon started")
         if response == 'n':
-            deamon = {
+            daemon = {
                 "is_active": False,
             }
-    return deamon
+    return daemon
 
 def conf_devices():
     response = 0
@@ -101,7 +101,7 @@ def main():
         selected_interfaces = list_int()
         selected_devices = list_device(selected_interfaces)
         saver().save_devices(selected_devices)
-        deamon = active_deamon()
+        daemon = active_daemon()
         conf_devices()
 
         print("Just press enter to select the default value")
@@ -138,7 +138,7 @@ def main():
         if response == '':
             response = "/etc/crontab"
         crontab_location = response
-        saver().save_setup(selected_interfaces, deamon, delay_hour, delay_minute, 
+        saver().save_setup(selected_interfaces, daemon, delay_hour, delay_minute, 
                            devices_location, backup_location, crontab_location)
         print("Configuration saved")
 

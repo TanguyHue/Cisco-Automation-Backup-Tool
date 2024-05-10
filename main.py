@@ -8,6 +8,7 @@ from backup.modules.backup import backup
 from setup.modules.save import saver
 from setup.modules.list import listClass as list
 from setup.modules.cron import save_cron, remove_cron
+from daemon_module.modules.daemonClass import status as daemon_status
 import curses
 
 if __name__ == '__main__':
@@ -62,6 +63,10 @@ if __name__ == '__main__':
             case 6:
                 print("Cron")
                 remove_cron()
+                system("clear")
+            case 7:
+                print("daemon status")
+                daemon_status()
                 system("clear")
             case default:
                 print("Goodbye !")
