@@ -5,11 +5,13 @@ import datetime
 import sys
 import daemon
 import os
+import datetime
 
 class pingDetect:
     def __init__(self, log_file):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_RAW, socket.IPPROTO_ICMP)
         self.log_file = log_file
+        self.recent_pings = {}
 
     def start(self):
         with open(self.log_file, 'a') as log_file:
@@ -23,9 +25,15 @@ class pingDetect:
                     iph = struct.unpack('!BBHHHBBH4s4s', ip_header)
                     source_ip = socket.inet_ntoa(iph[8])
                     
-                    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    current_time = datetime.datetime.now()
+                    formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
 
-                    log_file.write(f"{current_time} | Ping from: {source_ip}\n")
+                    if source_ip in self.recent_pings:
+                        last_ping_time = self.recent_pings[source_ip]
+                        if (current_time - last_ping_time).total_seconds() < 60:
+                            continue
+                    self.recent_pings[source_ip] = current_time
+                    log_file.write(f"{formatted_time} | Ping from: {source_ip}\n")
                     log_file.flush()
                     
 class pingDaemon:
