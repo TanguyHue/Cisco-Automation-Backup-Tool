@@ -1,8 +1,8 @@
 import json
 
 class saver:
-    def __init__(self, setup_file='./data/setup_file.json', devices_file='./data/devices.json') -> None:
-        self.setup_file = setup_file
+    def __init__(self, devices_file='./data/devices.json') -> None:
+        self.setup_file = './data/setup_file.json'
         self.devices_file = devices_file
 
     def save_setup(self, interface, daemon, delay_hour, delay_minute, 

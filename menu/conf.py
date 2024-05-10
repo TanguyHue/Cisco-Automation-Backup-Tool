@@ -112,7 +112,8 @@ def main():
         saver().save_devices(selected_devices)
         daemon = active_daemon()
         conf_devices()
-        remove_cron(False)
+        if os.path.exists('./data/setup_file.json'):
+            remove_cron(False)
 
         print("Just press enter to select the default value")
         response = -1
