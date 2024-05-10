@@ -37,17 +37,22 @@ def active_daemon():
     stop_daemon()
     while response not in ['y', 'n', '']:
         response = input("Do you want to start the daemon ? (y/n) (default: y) ")
+        location = input("Where is the daemon log ? (default: /tmp/log.txt) ")
+        if location == '':
+            location = "/tmp/log.txt"
         if response == 'y' or response == '':
             daemon = {
                 "is_active": True,
-                "daemon_location": "./daemon/modules/daemon.py",
-                "daemon_log": "/tmp/log.txt",
+                "daemon_location": "./daemon_module/modules/daemonClass.py",
+                "daemon_log": location,
             }
-            os.system("sudo python3 ./daemon/modules/daemon.py &")
+            os.system("sudo python3 ./daemon_module/modules/daemonClass.py &")
             print("Daemon started")
         if response == 'n':
             daemon = {
                 "is_active": False,
+                "daemon_location": "./daemon_module/modules/daemonClass.py",
+                "daemon_log": location,
             }
     return daemon
 

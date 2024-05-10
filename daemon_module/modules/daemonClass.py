@@ -55,7 +55,7 @@ def status():
     with open(daemon["daemon_log"], 'r') as log_file:
         lines = log_file.readlines()
         for line in lines[-10:]:
-            print(line)
+            print(line, end="")
     response = 0
     while response != "1" and response != "2":
         if daemon["is_active"]:
@@ -74,7 +74,7 @@ def status():
         config["daemon"]["is_active"] = True
         json.dump(config, open("./data/setup_file.json", "w+"), indent=4)
         os.system("sudo python3 ./daemon_module/modules/daemonClass.py &")
-        input("Daemon stopped. Press enter to exit")
+        input("Daemon started. Press enter to exit")
     
 if __name__ == "__main__":
     pingDaemon().start()
