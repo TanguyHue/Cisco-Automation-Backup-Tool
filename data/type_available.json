@@ -5,19 +5,43 @@
     },
     {
         "name": "Cisco IOS-XE",
-        "value": "cisco_ios_xe"
+        "value": "cisco_xe"
     },
     {
         "name": "Cisco IOS-XR",
-        "value": "cisco_ios_xr"
+        "value": "cisco_xr"
     },
     {
         "name": "Cisco NX-OS",
         "value": "cisco_nxos"
     },
     {
+        "name": "Cisco SG200",
+        "value": "cisco_s200"
+    },
+    {
         "name": "Cisco SG300",
-        "value": "cisco_sg300"
+        "value": "cisco_s300"
+    },
+    {
+        "name": "Cisco ASA",
+        "value": "cisco_asa"
+    },
+    {
+        "name": "Cisco FTD (Firepower Threat Defense)",
+        "value": "cisco_ftd"
+    },
+    {
+        "name": "Cisco TelePresence",
+        "value": "cisco_tp"
+    },
+    {
+        "name": "Cisco Viptela",
+        "value": "cisco_viptela"
+    },
+    {
+        "name": "Cisco Wireless LAN Controller (WLC)",
+        "value": "cisco_wlc"
     },
     {
         "name": "Other",

@@ -85,7 +85,7 @@ class compareClass:
             elif key == curses.KEY_UP and index > 0:
                 index -= 1
             elif key == ord('u'):
-                backup(self.backup_selected, self.devices_list, True)
+                backup(self.backup_selected, self.devices_list, False)
                 break
             elif key == ord('q'):
                 self.f1 = None

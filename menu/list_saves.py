@@ -4,6 +4,7 @@ from time import strptime
 from setup.modules.device import device as device_type
 from setup.modules.list import listClass as list
 from file_comparaison.modules.compare import compareClass
+from setup.modules.cron import backup
 import curses
 
 class option_type:
@@ -112,11 +113,14 @@ def main():
     selected_device = device_list(devices)
     while selected_device.get_text() !=  "Quit":
         if selected_device.get_text() == "Make a backup for all devices":
+            for device in devices:
+                backup(f"{device.get_mac()}", "./data/devices.json", True)
+            selected_backup = 0
             selected_device = device_list(devices)
         else:
             selected_backup = backup_list(selected_device)
             if selected_backup.get_text() == "Make a backup for this device":
-                pass
+                backup(f"{selected_device.get_mac()}", "./data/devices.json", True)
             elif selected_backup.get_text() == "List of devices":
                 selected_backup = 0
                 selected_device = device_list(devices)

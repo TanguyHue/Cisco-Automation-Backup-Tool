@@ -1,7 +1,10 @@
 from json import load
 import os
+import threading
+from time import strftime, sleep
 from crontab import CronTab
 import sys
+from netmiko import ConnectHandler
 
 def backup(backup_location, devices_file, save_backup):
     if save_backup:
@@ -20,6 +23,10 @@ def backup(backup_location, devices_file, save_backup):
     if not found:
         print("Device not found")
         return
+    
+    if device_info["type"] == "other":
+        print("Device type not supported")
+        return
 
     device = {
         'device_type': device_info["type"],
@@ -32,7 +39,47 @@ def backup(backup_location, devices_file, save_backup):
     print(device)
 
     if save_backup:
-        pass
+        class save_backup:
+            def __init__(self, device, backup_location):
+                self.device = device
+                self.backup_location = backup_location
+            def run(self):
+                self.backup(self.device, self.backup_location)
+            def backup(self, device, backup_location):
+                command = 'show running-config'
+                os.system("clear")
+                self.test_connection = False
+                def afficher_attente():
+                    while True and not self.test_connection:
+                        for i in range(3):
+                            print(f"Test of SSH connection to {device_info['ip']}" + "." * (i + 1), end="\r")
+                            sleep(0.4)
+                            print("\033[K", end="")
+                thread = threading.Thread(target=afficher_attente)
+                thread.daemon = True
+                thread.start()
+                try:
+                    net_connect = ConnectHandler(**device)
+                    net_connect.enable()
+                    output = net_connect.send_command(command)
+                    print(f"{command}:\n{output[:10]}...\n")
+                    net_connect.disconnect()          
+                    self.test_connection = True
+                    thread.join()
+                    current_time = strftime("%Y-%m-%d-%H-%M-%S")
+                    
+                    if not os.path.exists(backup_location):
+                        os.makedirs(backup_location)
+                    with open(f"{backup_location}/{current_time}.ios", 'w') as f:
+                        f.write(output)
+                except Exception as e:   
+                    os.system("clear")                  
+                    self.test_connection = True
+                    thread.join()
+                    print(f"Error backing up {device_info['mac']}\n")
+                    print(e)
+                    input("Press enter to continue")
+        save_backup(device, backup_location).run()
     else:
         try:
             with open(backup_location, 'r') as f:
