@@ -5,7 +5,7 @@ from os import listdir
 from time import strptime
 from sys import path
 path.append("../..")
-from backup.modules.device_backup import set_save
+from setup.modules.cron import backup
 
 class compareClass:
     def __init__(self) -> None:
@@ -85,7 +85,7 @@ class compareClass:
             elif key == curses.KEY_UP and index > 0:
                 index -= 1
             elif key == ord('u'):
-                set_save(self.backup_selected, self.devices_list)
+                backup(self.backup_selected, self.devices_list, True)
                 break
             elif key == ord('q'):
                 self.f1 = None

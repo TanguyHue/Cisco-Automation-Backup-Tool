@@ -46,8 +46,9 @@ def backup(backup_location, devices_file, save_backup):
         except FileExistsError:
             print("File not found")
 
-def save_cron(mac_address_list = []):
-    os.system("clear")
+def save_cron(mac_address_list = [], enter = True):
+    if enter:
+        os.system("clear")
     parameters = load(open("./data/setup_file.json", "r"))
     crontab_location = parameters["crontab_location"]
     delay_hour = parameters["delay_hour"]
@@ -68,9 +69,13 @@ def save_cron(mac_address_list = []):
         job.setall(f'{delay_minute} {delay_hour} * * *')
         job.set_comment(f'Cisco automation tool: {mac_address} backup')
         cron.write()
-        print(f'Jobs for {mac_address} added')
+        if enter:
+            print(f'Jobs for {mac_address} added')
 
-    input("Press enter to continue")
+    if enter:
+        input("Press enter to continue")
+    else:
+        print("Jobs added")
     
 def remove_cron(enter = True):
     if enter:

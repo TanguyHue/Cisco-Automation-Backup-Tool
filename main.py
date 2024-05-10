@@ -65,7 +65,7 @@ if __name__ == '__main__':
                 remove_cron()
                 system("clear")
             case 7:
-                print("daemon status")
+                print("Daemon status")
                 daemon_status()
                 system("clear")
             case default:

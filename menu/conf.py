@@ -3,11 +3,14 @@ from setup.modules.list_interface import interfaces
 from setup.modules.list_scan import scanner
 from setup.modules.save import saver
 from setup.modules.liste_type import deviceType
+from setup.modules.cron import save_cron, remove_cron
 from daemon_module.modules.daemonClass import stop_daemon
 from backup.modules.backup import backup
 import os
 import curses
 import json
+
+max_device = 20
 
 def list_int():
     liste = list(interfaces().interface_address, 'List of network interface', True, False)
@@ -21,11 +24,11 @@ def list_device(interface):
     if devices.__len__() == 0:
         print("No devices found on the network.")
         return
-    if devices.__len__() > 20:
-        print("Too many devices found on the network. Only the first 20 will be displayed.")
+    if devices.__len__() > max_device:
+        print(f"Too many devices found on the network. Only the first {max_device} will be displayed.")
         input("Press enter to continue...")
         devices.sort(key=lambda x: tuple(int(part) for part in x.get_ip().split('.')))
-        devices = devices[:20]
+        devices = devices[:max_device]
     liste = list(devices, 'List of devices on the network', False, True)
     curses.wrapper(liste.executer)
     selected_devices = [device for device, checked in zip(liste.items, liste.checked) if checked]
@@ -37,6 +40,7 @@ def active_daemon():
     stop_daemon()
     while response not in ['y', 'n', '']:
         response = input("Do you want to start the daemon ? (y/n) (default: y) ")
+        print("If a log file is already present, it will be overwritten")
         location = input("Where is the daemon log ? (default: /tmp/log.txt) ")
         if location == '':
             location = "/tmp/log.txt"
@@ -46,7 +50,7 @@ def active_daemon():
                 "daemon_location": "./daemon_module/modules/daemonClass.py",
                 "daemon_log": location,
             }
-            os.system("sudo python3 ./daemon_module/modules/daemonClass.py &")
+            os.system(f"sudo python3 ./daemon_module/modules/daemonClass.py {daemon['daemon_log']} &")
             print("Daemon started")
         if response == 'n':
             daemon = {
@@ -108,6 +112,7 @@ def main():
         saver().save_devices(selected_devices)
         daemon = active_daemon()
         conf_devices()
+        remove_cron(False)
 
         print("Just press enter to select the default value")
         response = -1
@@ -146,7 +151,6 @@ def main():
         saver().save_setup(selected_interfaces, daemon, delay_hour, delay_minute, 
                            devices_location, backup_location, crontab_location)
         print("Configuration saved")
-
         backupFile = backup(backup_location, devices_location)
         response = 0
         while response not in ['y', 'n', '']:
@@ -154,6 +158,9 @@ def main():
             if response == 'y':
                 backupFile.reset()
         backupFile.save()
+        response = input("Activate the backup automation ? (y/n) (default: y) ")
+        if response == '' or response == 'y':
+            save_cron([], False)
 
     print("Configuration finished")
     input("Press enter to continue...")
