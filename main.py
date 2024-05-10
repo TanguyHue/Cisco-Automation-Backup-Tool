@@ -7,6 +7,7 @@ from menu.list_saves import main as list_saves
 from backup.modules.backup import backup
 from setup.modules.save import saver
 from setup.modules.list import listClass as list
+from setup.modules.cron import save_cron, remove_cron
 import curses
 
 if __name__ == '__main__':
@@ -16,8 +17,9 @@ if __name__ == '__main__':
     liste = list(menu_list().item_menu, 'Main Menu', True, False)
     curses.wrapper(liste.executer)
     selected_item = [item for item, checked in zip(liste.items, liste.checked) if checked][0].get_value()
+    quit_option = menu_list().length() - 1
 
-    while selected_item != 5:
+    while selected_item != quit_option:
         match selected_item:
             case 0:
                 print("Configuration")
@@ -51,14 +53,20 @@ if __name__ == '__main__':
                         conf.main()
                     else:
                         system("clear")
-                        selected_item = 5                 
+                        selected_item = quit_option               
                 print("Reset configuration")
             case 5:
-                print("Goodbye")
+                print("Cron")
+                save_cron()
+                system("clear")
+            case 6:
+                print("Cron")
+                remove_cron()
+                system("clear")
             case default:
-                print("Not implemented yet")
+                print("Goodbye !")
         
-        if selected_item != 5:
+        if selected_item != quit_option:
             liste = list(menu_list().item_menu, 'Main Menu', True, False)
             curses.wrapper(liste.executer)
             selected_item = [item for item, checked in zip(liste.items, liste.checked) if checked][0].get_value()   

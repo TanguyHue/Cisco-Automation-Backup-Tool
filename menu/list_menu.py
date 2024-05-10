@@ -17,3 +17,7 @@ class menu_list:
         items = json.load(open("./menu/menu.json"))
         for item in items:
             self.item_menu.append(item_menu(item['titre'], item['value']))
+        self.item_menu.append(item_menu("Quit", len(self.item_menu)))
+    
+    def length(self):
+        return len(self.item_menu)

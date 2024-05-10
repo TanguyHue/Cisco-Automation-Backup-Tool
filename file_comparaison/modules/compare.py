@@ -5,7 +5,7 @@ from os import listdir
 from time import strptime
 from sys import path
 path.append("../..")
-from setup.modules.save import set_save
+from backup.modules.device_backup import set_save
 
 class compareClass:
     def __init__(self) -> None:

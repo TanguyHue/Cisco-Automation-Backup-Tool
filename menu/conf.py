@@ -104,18 +104,28 @@ def main():
         deamon = active_deamon()
         conf_devices()
 
+        print("Just press enter to select the default value")
         response = -1
         while response < 0 or response > 24:
-            response = (input("How often do you want to save the data ? (in hours) (default: 5) "))
+            response = (input("How often do you want to save the data ? (in hours) (default: 0) "))
             if response == '':
-                response = 5
+                response = 0
             else:
                 try:
                     response = int(response)
                 except ValueError:
                     response = -1
-        
-        delay = response
+        delay_hour = response
+        while response < 1 or response > 59:
+            response = (input("How often do you want to save the data ? (in minutes) (default: 2) "))
+            if response == '':
+                response = 2
+            else:
+                try:
+                    response = int(response)
+                except ValueError:
+                    response = -1
+        delay_minute = response
         response = input("Where do you want to save the backup ? (default: ./data/backup) ")
         if response == '':
             response = "./data/backup"
@@ -124,7 +134,12 @@ def main():
         if response == '':
             response = "./data/devices.json"
         devices_location = response
-        saver().save_setup(selected_interfaces, deamon, delay, devices_location, backup_location)
+        response = input("Where is the crontab file ? (default: /etc/crontab) ")
+        if response == '':
+            response = "/etc/crontab"
+        crontab_location = response
+        saver().save_setup(selected_interfaces, deamon, delay_hour, delay_minute, 
+                           devices_location, backup_location, crontab_location)
         print("Configuration saved")
 
         backupFile = backup(backup_location, devices_location)

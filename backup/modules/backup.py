@@ -2,7 +2,6 @@ import os
 import json
 import threading
 import time
-import netmiko
 
 class backup:
     def __init__(self, location, devices_location) -> None:

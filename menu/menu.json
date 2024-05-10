@@ -20,7 +20,11 @@
         "value": 4
     },
     {
-        "titre": "Quit",
+        "titre": "Add devices automation to cron",
         "value": 5
+    },
+    {
+        "titre": "Remove devices automation from cron",
+        "value": 6
     }
 ]
