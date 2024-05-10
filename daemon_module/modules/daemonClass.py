@@ -2,10 +2,10 @@ import json
 import socket
 import struct
 import datetime
+import subprocess
 import sys
 import daemon
 import os
-import datetime
 
 class pingDetect:
     def __init__(self, log_file):
@@ -30,11 +30,39 @@ class pingDetect:
 
                     if source_ip in self.recent_pings:
                         last_ping_time = self.recent_pings[source_ip]
-                        if (current_time - last_ping_time).total_seconds() < 60:
+                        if (current_time - last_ping_time).total_seconds() < 10:
                             continue
                     self.recent_pings[source_ip] = current_time
                     log_file.write(f"{formatted_time} | Ping from: {source_ip}\n")
-                    log_file.flush()
+
+                    list_devices = json.load(open("./data/setup_file.json", "r"))["devices_list_location"]
+                    list_devices = json.load(open(list_devices, "r"))
+                    found = False
+                    for device in list_devices:
+                        if device["ip"] == source_ip:
+                            found = True
+                            error_file_path = "/tmp/error.txt"
+                            with open(error_file_path, 'a') as error_file:
+                                error_file.write(f'Backup saved for : {device["mac"]}\n')
+                                error_file.flush() 
+                            initial_size = os.path.getsize(error_file_path)
+                            command = f'python3 ./setup/modules/cron.py 0 {device["mac"]}'
+                            subprocess.run(command, shell=True, stderr=open(error_file_path, 'a'))
+                            
+                            new_size = os.path.getsize(error_file_path)
+                            if new_size != initial_size:
+                                formatted_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                                log_file.write(f"Error in cron program for : {device['mac']}\n")
+                                log_file.write(f"Error dated : {formatted_time}\n")
+
+                                with open(error_file_path, 'a') as error_file:
+                                    error_file.write(f"Error dated : {formatted_time}\n======================================\n\n")
+                                    error_file.flush() 
+                            else:
+                                log_file.write(f"No error detected\n")
+
+                    if not found:
+                        log_file.write("Device not found in list\n")
                     
 class pingDaemon:
     def __init__(self) -> None:
@@ -45,6 +73,7 @@ class pingDaemon:
             os.system(f"sudo chmod 776 {log_file}")
         self.pid = os.getpid()
         with daemon.DaemonContext(
+            working_directory=os.getcwd(),
             stdout=open('/tmp/stdout.txt', 'w+'),
             stderr=open('/tmp/stderr.txt', 'w+'),
             stdin=open('/dev/null', 'r')
@@ -74,6 +103,7 @@ def status():
             lines = log_file.readlines()
             for line in lines:
                 print(line, end="")
+    print('\nError of cron programm are stored in /tmp/error.txt')
     response = 0
     while response != "1" and response != "2":
         if daemon["is_active"]:
@@ -91,7 +121,7 @@ def status():
         config = json.load(open("./data/setup_file.json", "r"))
         config["daemon"]["is_active"] = True
         json.dump(config, open("./data/setup_file.json", "w+"), indent=4)
-        os.system(f"sudo python3 ./daemon_module/modules/daemonClass.py {daemon['daemon_log']} &")
+        os.system(f"sudo python3 ./daemon_module/modules/daemonClass.py {daemon['daemon_log']} 2> /tmp/error.txt &")
         input("Daemon started. Press enter to exit")
     
 if __name__ == "__main__":
