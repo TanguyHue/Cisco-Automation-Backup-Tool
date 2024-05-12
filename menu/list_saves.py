@@ -114,7 +114,7 @@ def main():
     selected_device = device_list(devices)
     while selected_device.get_text() !=  "Quit":
         if selected_device.get_text() == "Make a backup for all devices":
-            setup = json.load(open("./data/setup_file.json", "r"))['backup_location']
+            setup = json.load(open("./data/setup_file.json", "r"))
             backup_location = setup['backup_location']
             device_location = setup['devices_list_location']
             for device in devices:
@@ -124,7 +124,7 @@ def main():
         else:
             selected_backup = backup_list(selected_device)
             if selected_backup.get_text() == "Make a backup for this device":
-                setup = json.load(open("./data/setup_file.json", "r"))['backup_location']
+                setup = json.load(open("./data/setup_file.json", "r"))
                 backup_location = setup['backup_location']
                 device_location = setup['devices_list_location']
                 backup(f"{backup_location}/{selected_device.get_mac()}", device_location, True)

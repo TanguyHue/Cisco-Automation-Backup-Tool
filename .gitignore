@@ -4,6 +4,7 @@ __pycache__
 
 # setup and data files
 *.json
+data/backup
 !type_available.json*
 !menu.json
 
