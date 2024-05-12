@@ -74,12 +74,18 @@ def backup(backup_location, devices_file, save_backup):
                         os.makedirs(backup_location)
                     with open(f"{backup_location}/{current_time}.ios", 'w') as f:
                         f.write(output)
+                    log_save = '/'.join(backup_location.split('/')[:-1]) + '/' + backup_location.split('/')[-1].replace(':', '-') + "/log_save.txt"
+                    with open(log_save, 'a') as f:
+                        f.write(f"{strftime('%Y-%m-%d-%H-%M-%S')}: Backup of {device_info['ip']} ({device_info['mac']})done\n")
                 except Exception as e:   
                     os.system("clear")                  
                     self.test_connection = True
                     thread.join()
                     print(f"Error backing up {device_info['mac']}\n")
                     print(e)
+                    log_save = '/'.join(backup_location.split('/')[:-1]) + '/' + backup_location.split('/')[-1].replace(':', '-') + "/log_save.txt"
+                    with open(log_save, 'a') as f:
+                        f.write(f"{strftime('%Y-%m-%d-%H-%M-%S')}: Backup of {device_info['ip']} ({device_info['mac']})failed\n")
                     input("Press enter to continue")
         save_backup(device, backup_location).run()
     else:
@@ -249,11 +255,8 @@ def add_daemon():
     if remove_daemon():
         return 1
     crontab_location = 0
-    if not os.path.exists("./data/setup_file.json"):
-        crontab_location = "/etc/crontab"
-    else:
-        parameters = load(open("./data/setup_file.json", "r"))
-        crontab_location = parameters["crontab_location"]
+    parameters = load(open("./data/setup_file.json", "r"))
+    crontab_location = parameters["crontab_location"]
     if not os.path.exists(crontab_location):
         print("Error: crontab not found")
         return
@@ -266,11 +269,8 @@ def add_daemon():
 
 def remove_daemon():
     crontab_location = 0
-    if not os.path.exists("./data/setup_file.json"):
-        crontab_location = "/etc/crontab"
-    else:
-        parameters = load(open("./data/setup_file.json", "r"))
-        crontab_location = parameters["crontab_location"]
+    parameters = load(open("./data/setup_file.json", "r"))
+    crontab_location = parameters["crontab_location"]
     if not os.path.exists(crontab_location):
         print("Error: crontab not found")
         return 1

@@ -58,13 +58,6 @@ def active_daemon():
                 "daemon_location": "./daemon_module/modules/daemonClass.py",
                 "daemon_log": location,
             }
-    response = 0
-    while response not in ['y', 'n', '']:
-        response = input("Do you want to autolaunch the daemon on start ? (y/n) (default: y) ")
-        if response == 'y' or response == '':
-            add_daemon()
-        if response == 'n':
-            remove_daemon()
     return daemon
 
 def conf_devices():
@@ -159,6 +152,14 @@ def main():
         saver().save_setup(selected_interfaces, daemon, delay_hour, delay_minute, 
                            devices_location, backup_location, crontab_location)
         print("Configuration saved")
+
+        response = 0
+        while response not in ['y', 'n', '']:
+            response = input("Do you want to autolaunch the daemon on boot ? (y/n) (default: y) ")
+            if response == 'y' or response == '':
+                add_daemon()
+            if response == 'n':
+                remove_daemon()
         backupFile = backup(backup_location, devices_location)
         response = 0
         while response not in ['y', 'n', '']:
@@ -166,7 +167,7 @@ def main():
             if response == 'y':
                 backupFile.reset()
         backupFile.save()
-        response = input("Activate the backup automation ? (y/n) (default: y) ")
+        response = input("Add cron jobs for automation now ? (y/n) (default: y) ")
         if response == '' or response == 'y':
             save_cron([], False)
 

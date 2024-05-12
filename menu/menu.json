@@ -1,23 +1,15 @@
 [
     {
-        "titre": "Configuration",
-        "value": 0
-    },
-    {
-        "titre": "List of devices",
-        "value": 1
+        "titre": "List of saves",
+        "value": 3
     },
     {
         "titre": "Do a new scan",
         "value": 2
     },
     {
-        "titre": "List of saves",
-        "value": 3
-    },
-    {
-        "titre": "Reset configuration",
-        "value": 4
+        "titre": "List of devices",
+        "value": 1
     },
     {
         "titre": "Add devices automation to cron",
@@ -34,5 +26,13 @@
     {
         "titre": "Relaunch the daemon",
         "value": 8
+    },
+    {
+        "titre": "Configuration",
+        "value": 0
+    },
+    {
+        "titre": "Erase data",
+        "value": 4
     }
 ]

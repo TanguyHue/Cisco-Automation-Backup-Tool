@@ -39,6 +39,9 @@ class backup:
             thread.start()
             os.makedirs(f"{self.location}/{name}", mode = 0o777, exist_ok=True)
             os.system(f"ping -c 3 {device['ip']} > {self.location}/{name}/ping.txt")
+            if not os.path.exists(f"{self.location}/{name}/log_save.txt"):
+                os.system(f"touch {self.location}/{name}/log_save.txt")
+            os.system(f"chmod 666 {self.location}/{name}/log_save.txt")
 
             with open(f"{self.location}/{name}/ping.txt", 'r') as f:
                 if "100% packet loss" in f.read():
