@@ -246,13 +246,17 @@ def remove_cron(enter = True):
         input("Press enter to continue")
 
 def add_daemon():
-    remove_daemon()
+    if remove_daemon():
+        return 1
     crontab_location = 0
     if not os.path.exists("./data/setup_file.json"):
         crontab_location = "/etc/crontab"
     else:
         parameters = load(open("./data/setup_file.json", "r"))
         crontab_location = parameters["crontab_location"]
+    if not os.path.exists(crontab_location):
+        print("Error: crontab not found")
+        return
     cron = CronTab(tabfile=crontab_location)
     cron.write()
     job = cron.new(command=f'python3 {os.getcwd()}/daemon_module/modules/daemonClass.py')
@@ -267,6 +271,9 @@ def remove_daemon():
     else:
         parameters = load(open("./data/setup_file.json", "r"))
         crontab_location = parameters["crontab_location"]
+    if not os.path.exists(crontab_location):
+        print("Error: crontab not found")
+        return 1
     cron = CronTab(tabfile=crontab_location)
     jobs_to_remove = [job for job in cron if job.comment.startswith("Daemon reboot of Cisco Automation Tool")]
     if len(jobs_to_remove) != 0:
