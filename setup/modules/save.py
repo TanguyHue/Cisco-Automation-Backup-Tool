@@ -1,4 +1,5 @@
 import json
+import os
 
 class saver:
     def __init__(self, devices_file='./data/devices.json') -> None:
@@ -19,11 +20,15 @@ class saver:
             "delay_minute": delay_minute
         }
         
+        if not os.path.exists(os.path.dirname(self.setup_file)):
+            os.makedirs(os.path.dirname(self.setup_file))
         with open(self.setup_file, 'w') as f:
             json.dump(setup, f, indent=4)
 
     def save_devices(self, devices: list):
         devices = [device.get_info() for device in devices]
+        if not os.path.exists(os.path.dirname(self.devices_file)):
+            os.makedirs(os.path.dirname(self.devices_file))
         with open(self.devices_file, 'w') as f:
             json.dump(devices, f, indent=4)
 
