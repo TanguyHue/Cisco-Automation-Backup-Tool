@@ -12,7 +12,8 @@ class option_type:
     def get_text(self):
         return self.text
 
-def load(path="./data/devices.json"):
+def load():
+    path = json.load(open("./data/setup_file.json", "r"))['devices_list_location']
     with open(path, "r") as file:
         devices_load = json.load(file)
     devices = []
@@ -66,8 +67,11 @@ def modifier(device_mod: device_type):
     devices = load()
 
     os.system("clear")
+    setup = ''
+    with open("./data/setup_file.json", "r") as file:
+        setup = json.load(file)['devices_list_location']
     new_devices = [device if device.get_mac() != device_mod.get_mac() else device_mod for device in devices]
-    with open("./data/devices.json", "w") as file:
+    with open(setup, "w") as file:
         json.dump([device.get_full_info() for device in new_devices], file, indent=4)
 
 def delete(device_delete):
@@ -78,7 +82,10 @@ def delete(device_delete):
     if response == "y":
         devices = load()
         new_devices = [device for device in devices if device.get_mac() != device_delete.get_mac()]
-        with open("./data/devices.json", "w") as file:
+        setup = ''
+        with open("./data/setup_file.json", "r") as file:
+            setup = json.load(file)['devices_list_location']
+        with open(setup, "w") as file:
             json.dump([device.get_full_info() for device in new_devices], file, indent=4)
     os.system("clear")
 

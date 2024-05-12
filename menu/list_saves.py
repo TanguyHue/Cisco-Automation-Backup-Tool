@@ -109,20 +109,25 @@ def delete(selected_device, backup_delete):
 
 
 def main():
-    devices = load_devices()
+    device_location = json.load(open("./data/setup_file.json", "r"))['devices_list_location']
+    devices = load_devices(device_location)
     selected_device = device_list(devices)
     while selected_device.get_text() !=  "Quit":
         if selected_device.get_text() == "Make a backup for all devices":
-            backup_location = json.load(open("./data/setup_file.json", "r"))['backup_location']
+            setup = json.load(open("./data/setup_file.json", "r"))['backup_location']
+            backup_location = setup['backup_location']
+            device_location = setup['devices_list_location']
             for device in devices:
-                backup(f"{backup_location}/{device.get_mac()}", "./data/devices.json", True)
+                backup(f"{backup_location}/{device.get_mac()}", device_location, True)
             selected_backup = 0
             selected_device = device_list(devices)
         else:
             selected_backup = backup_list(selected_device)
             if selected_backup.get_text() == "Make a backup for this device":
-                backup_location = json.load(open("./data/setup_file.json", "r"))['backup_location']
-                backup(f"{backup_location}/{selected_device.get_mac()}", "./data/devices.json", True)
+                setup = json.load(open("./data/setup_file.json", "r"))['backup_location']
+                backup_location = setup['backup_location']
+                device_location = setup['devices_list_location']
+                backup(f"{backup_location}/{selected_device.get_mac()}", device_location, True)
             elif selected_backup.get_text() == "List of devices":
                 selected_backup = 0
                 selected_device = device_list(devices)

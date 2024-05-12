@@ -60,7 +60,7 @@ def active_daemon():
             }
     return daemon
 
-def conf_devices():
+def conf_devices(path = "./data/devices.json"):
     response = 0
     while response not in ['y', 'n']:
         response = input("Is the username and password the same for all devices ? (y/n) ")
@@ -79,7 +79,7 @@ def conf_devices():
         if response == 'n':
             sameEnable = False
 
-    devices = json.load(open("./data/devices.json"))
+    devices = json.load(open(path))
     for device in devices:
         list_type = list(deviceType().type_available, f"Type of device {device['ip']}", True, False)
         if not sameAccount:
@@ -95,7 +95,7 @@ def conf_devices():
         device['password'] = password
         device['enable_password'] = enablePass
 
-    json.dump(devices, open("./data/devices.json", 'w'), indent=4)
+    json.dump(devices, open(path, 'w'), indent=4)
 
 def main():
     init = True
@@ -107,11 +107,6 @@ def main():
                 init = False
 
     if init:
-        selected_interfaces = list_int()
-        selected_devices = list_device(selected_interfaces)
-        saver().save_devices(selected_devices)
-        daemon = active_daemon()
-        conf_devices()
         if os.path.exists('./data/setup_file.json'):
             remove_cron(False)
 
@@ -149,6 +144,11 @@ def main():
         if response == '':
             response = "/etc/crontab"
         crontab_location = response
+        selected_interfaces = list_int()
+        selected_devices = list_device(selected_interfaces)
+        saver(devices_location).save_devices(selected_devices)
+        daemon = active_daemon()
+        conf_devices(devices_location)
         saver().save_setup(selected_interfaces, daemon, delay_hour, delay_minute, 
                            devices_location, backup_location, crontab_location)
         print("Configuration saved")

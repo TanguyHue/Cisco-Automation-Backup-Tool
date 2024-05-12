@@ -6,14 +6,17 @@ from setup.modules.save import saver
 import json
 
 def main():
-    json_interface = json.load(open("./data/setup_file.json"))['interface']
+    setup = json.load(open("./data/setup_file.json"))
+    json_interface = setup['interface']
     interface_object = interface(json_interface['interface'], json_interface['ipv4_address'], json_interface['netmask'])
+    backup_location = setup['backup_location']
+    device_location = setup['devices_list_location']
 
     devices = list_device(interface_object)
     saver().save_devices(devices)
     conf_devices()
 
-    backupFile = backup("./data/backup", "./data/devices.json")
+    backupFile = backup(backup_location, device_location)
     backupFile.reset()
     backupFile.save()
 
