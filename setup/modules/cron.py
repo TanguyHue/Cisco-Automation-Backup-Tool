@@ -7,9 +7,6 @@ from time import localtime, strftime, sleep, strptime, time
 from crontab import CronTab
 import sys
 from netmiko import ConnectHandler, file_transfer
-from menu.list_menu import item_menu
-from setup.modules.list import listClass as list
-import curses
 
 def backup(backup_location, devices_file, save_backup):
     if save_backup:
@@ -90,35 +87,31 @@ def backup(backup_location, devices_file, save_backup):
         print(f"You choose to upload the save {backup_location.split('/')[-1]} for the device {device['ip']}\n")
         print('You have two possibilities to upload the save:')
         print('- You can make line per line:')
-        print('    This method will skip lines about SSH to avoid to stop the connection.')
+        print('    This method will skip lines contains SSH to avoid to stop the connection.')
         print(f"    If the connection between this device and {device['ip']} is stop due to the new parameters, it can cause trouble.")
         print('- You can copy this save in the startup-config file:')
         print('    This method will avoid to stop the connection during the transfer.')
         print('    After transfer done, the reboot command will be send and during the rebooting, the device will not working')
         print(f"    At the end, you will maybe need to connecting directly to {device['ip']} for finishing the rebooting\n")
         input('Press enter to continue')
-        choices = [
-            item_menu('Line per line', 0),
-            item_menu('Copy to startup-config', 1),
-            item_menu('Back', 2)
-        ]
-        liste = list(choices, 'Choose upload for ' + backup_location.split('/')[-1], True, False)
-        curses.wrapper(liste.executer)
-        selected_item = [item for item, checked in zip(liste.items, liste.checked) if checked][0].get_value()
+        os.system("clear")
+        choices = -1
+        while choices < 0 or choices > 2:
+            choices = int(input('Choose upload for ' + backup_location.split('/')[-1] + '\n0: Line per line\n1: Copy to startup-config\n2: Back\nChoice: '))
 
-        if selected_item == 0:
-            file_upload = 0
-            list_files = os.listdir(backup_location.split('/')[:-1])
+        if choices == 0:
+            list_files = os.listdir('/'.join(backup_location.split('/')[:-1]))
             list_files = [file for file in list_files if file.endswith(".ios")]
         
             def get_date(filename):
                 return strptime(filename[:-4], "%Y-%m-%d-%H-%M-%S")
 
             sorted_files = sorted(list_files, key=get_date, reverse=True)
-            last_backup_location = f"{backup_location.split('/')[:-1]}/{sorted_files[0]}"
+            last_backup_location = f"{'/'.join(backup_location.split('/')[:-1])}/{sorted_files[0]}"
             if last_backup_location == backup_location:
-                print('The selected file is the last backup, the current configuration will be getted\n')
+                print('\nThe selected file is the last backup, the current configuration will be getted')
                 print('After the backup, the selected file will be set as the current time\n')
+                input('Press enter to continue')
                 try:
                     net_connect = ConnectHandler(**device)
                     net_connect.enable()
@@ -137,7 +130,9 @@ def backup(backup_location, devices_file, save_backup):
                     os.system("clear")
                     print(f"Error backing up {device_info['ip']}\n")
                     print(e)
+                    print
                     input("Press enter to continue")
+                    return
             last_backup = 0
             with open(last_backup_location, "r") as f:
                 last_backup = f.read()
@@ -147,13 +142,14 @@ def backup(backup_location, devices_file, save_backup):
             diff = unified_diff(last_backup.splitlines(), file.splitlines(), n=20)
             diff_lines = list(diff)[3:]
             filtered_diff = [line for line in diff_lines if not line.startswith("@@")]
+            file_upload = []
 
             for line in filtered_diff:
                 if line.startswith("+"):
                     file_upload.append(line[1:])
                 elif line.startswith("-"):
                     file_upload.append("no " + line[1:])
-                else:
+                elif line.find("ssh") == -1:
                     file_upload.append(line)
 
             try:
@@ -172,7 +168,8 @@ def backup(backup_location, devices_file, save_backup):
                 print(f"Error connection with {device_info['ip']}\n")
                 print(e)
                 input("Press enter to continue")
-        if selected_item == 1:
+                return
+        elif choices == 1:
             source_file = backup_location
             destination_file = "startup-config"
             try:
@@ -220,7 +217,7 @@ def save_cron(mac_address_list = [], enter = True):
 
         if delay_hour == 0:
             delay_hour = '*'
-        job = cron.new(command=f'python3 {current_location}/setup/modules/cron.py 0 {mac_address}')
+        job = cron.new(command=f'cd {current_location} && python3 {current_location}/setup/modules/cron.py 0 {mac_address}')
         job.setall(f'{delay_minute} {delay_hour} * * *')
         job.set_comment(f'Cisco automation tool: {mac_address} backup')
         cron.write()
@@ -254,7 +251,7 @@ def add_daemon():
     crontab_location = parameters["crontab_location"]
     cron = CronTab(tabfile=crontab_location)
     cron.write()
-    job = cron.new(command=f'python3 {os.getcwd()}/daemon_module/modules/daemonClass.py &')
+    job = cron.new(command=f'python3 {os.getcwd()}/daemon_module/modules/daemonClass.py')
     job.setall('@reboot')
     job.set_comment(f'Daemon reboot of Cisco Automation Tool')
     cron.write()
@@ -264,7 +261,7 @@ def remove_daemon():
     crontab_location = parameters["crontab_location"]
     cron = CronTab(tabfile=crontab_location)
     jobs_to_remove = [job for job in cron if job.comment.startswith("Daemon reboot of Cisco Automation Tool")]
-    if jobs_to_remove is not None:
+    if len(jobs_to_remove) != 0:
         cron.remove(jobs_to_remove[0])
     cron.write()
 

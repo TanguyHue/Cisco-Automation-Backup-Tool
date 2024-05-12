@@ -58,6 +58,7 @@ def active_daemon():
                 "daemon_location": "./daemon_module/modules/daemonClass.py",
                 "daemon_log": location,
             }
+    response = 0
     while response not in ['y', 'n', '']:
         response = input("Do you want to autolaunch the daemon on start ? (y/n) (default: y) ")
         if response == 'y' or response == '':

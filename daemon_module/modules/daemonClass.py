@@ -70,7 +70,11 @@ class pingDaemon:
 
     def start(self, log_file='/tmp/log.txt'):
         if os.path.exists(log_file):
-            os.system(f"sudo chmod 776 {log_file}")
+            os.system(f"sudo chmod 666 {log_file}")
+        if os.path.exists("/tmp/stdout.txt"):
+            os.system(f"sudo rm /tmp/stdout.txt")
+        if os.path.exists("/tmp/stderr.txt"):
+            os.system(f"sudo rm /tmp/stderr.txt")
         self.pid = os.getpid()
         with daemon.DaemonContext(
             working_directory=os.getcwd(),
