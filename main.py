@@ -8,6 +8,7 @@ from backup.modules.backup import backup
 from setup.modules.save import saver
 from setup.modules.list import listClass as list
 from setup.modules.cron import save_cron, remove_cron
+from daemon_module.modules.daemonClass import start_daemon, stop_daemon
 from daemon_module.modules.daemonClass import status as daemon_status
 import curses
 
@@ -68,6 +69,10 @@ if __name__ == '__main__':
                 print("Daemon status")
                 daemon_status()
                 system("clear")
+            case 8:
+                stop_daemon()
+                start_daemon()
+                print("Relaunch daemon")
             case default:
                 print("Goodbye !")
         

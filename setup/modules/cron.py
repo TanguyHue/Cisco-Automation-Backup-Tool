@@ -140,6 +140,26 @@ def remove_cron(enter = True):
         print("Jobs removed")
         input("Press enter to continue")
 
+def add_daemon():
+    remove_daemon()
+    parameters = load(open("./data/setup_file.json", "r"))
+    crontab_location = parameters["crontab_location"]
+    cron = CronTab(tabfile=crontab_location)
+    cron.write()
+    job = cron.new(command=f'python3 {os.getcwd()}/daemon_module/modules/daemonClass.py &')
+    job.setall('@reboot')
+    job.set_comment(f'Daemon reboot of Cisco Automation Tool')
+    cron.write()
+
+def remove_daemon():
+    parameters = load(open("./data/setup_file.json", "r"))
+    crontab_location = parameters["crontab_location"]
+    cron = CronTab(tabfile=crontab_location)
+    jobs_to_remove = [job for job in cron if job.comment.startswith("Daemon reboot of Cisco Automation Tool")]
+    if jobs_to_remove is not None:
+        cron.remove(jobs_to_remove[0])
+    cron.write()
+
 if __name__ == '__main__':
     if len(sys.argv) < 3:
         print("Usage: python3 cron.py [0 : save | 1 : set] ...")

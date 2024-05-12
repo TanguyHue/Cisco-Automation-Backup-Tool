@@ -83,6 +83,10 @@ class pingDaemon:
 def stop_daemon():
     os.system("sudo pkill -f daemonClass.py")
 
+def start_daemon():
+    daemon = json.load(open("./data/setup_file.json", "r"))["daemon"]
+    os.system(f"sudo python3 ./daemon_module/modules/daemonClass.py {daemon['daemon_log']} 2> /tmp/error.txt &")
+
 def status():
     daemon = json.load(open("./data/setup_file.json", "r"))["daemon"]
     if daemon["is_active"]:
@@ -118,10 +122,10 @@ def status():
         json.dump(config, open("./data/setup_file.json", "w+"), indent=4)
         input("Daemon stopped. Press enter to exit")
     elif not daemon["is_active"] and response == "1":
+        start_daemon()
         config = json.load(open("./data/setup_file.json", "r"))
         config["daemon"]["is_active"] = True
         json.dump(config, open("./data/setup_file.json", "w+"), indent=4)
-        os.system(f"sudo python3 ./daemon_module/modules/daemonClass.py {daemon['daemon_log']} 2> /tmp/error.txt &")
         input("Daemon started. Press enter to exit")
     
 if __name__ == "__main__":

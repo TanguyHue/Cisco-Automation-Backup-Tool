@@ -3,7 +3,7 @@ from setup.modules.list_interface import interfaces
 from setup.modules.list_scan import scanner
 from setup.modules.save import saver
 from setup.modules.liste_type import deviceType
-from setup.modules.cron import save_cron, remove_cron
+from setup.modules.cron import save_cron, remove_cron, add_daemon, remove_daemon
 from daemon_module.modules.daemonClass import stop_daemon
 from backup.modules.backup import backup
 import os
@@ -58,6 +58,12 @@ def active_daemon():
                 "daemon_location": "./daemon_module/modules/daemonClass.py",
                 "daemon_log": location,
             }
+    while response not in ['y', 'n', '']:
+        response = input("Do you want to autolaunch the daemon on start ? (y/n) (default: y) ")
+        if response == 'y' or response == '':
+            add_daemon()
+        if response == 'n':
+            remove_daemon()
     return daemon
 
 def conf_devices():
