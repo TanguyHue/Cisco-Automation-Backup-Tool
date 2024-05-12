@@ -116,8 +116,7 @@ def backup(backup_location, devices_file, save_backup):
 
             sorted_files = sorted(list_files, key=get_date, reverse=True)
             last_backup_location = f"{backup_location.split('/')[:-1]}/{sorted_files[0]}"
-            is_last_backup = last_backup_location == backup_location
-            if is_last_backup:
+            if last_backup_location == backup_location:
                 print('The selected file is the last backup, the current configuration will be getted\n')
                 print('After the backup, the selected file will be set as the current time\n')
                 try:
@@ -145,9 +144,6 @@ def backup(backup_location, devices_file, save_backup):
             file = 0
             with open(backup_location, "r") as f:
                 file = f.read()
-            if is_last_backup:
-                # Rename the backup selected with the current time
-                os.rename(backup_location, backup_location.replace(backup_location.split('/')[-1].split('.')[0], strftime("%Y-%m-%d-%H-%M-%S")))
             diff = unified_diff(last_backup.splitlines(), file.splitlines(), n=20)
             diff_lines = list(diff)[3:]
             filtered_diff = [line for line in diff_lines if not line.startswith("@@")]
@@ -169,6 +165,8 @@ def backup(backup_location, devices_file, save_backup):
                         print(output)
                     net_connect.disconnect()
                     print(f"Configuration of {device_info['mac']} done")
+                # Rename the backup selected with the current time
+                os.rename(backup_location, backup_location.replace(backup_location.split('/')[-1].split('.')[0], strftime("%Y-%m-%d-%H-%M-%S")))
             except Exception as e:   
                 os.system("clear")
                 print(f"Error connection with {device_info['ip']}\n")
@@ -194,6 +192,9 @@ def backup(backup_location, devices_file, save_backup):
                 print(output)
 
                 connection.disconnect()
+
+                # Rename the backup selected with the current time
+                os.rename(backup_location, backup_location.replace(backup_location.split('/')[-1].split('.')[0], strftime("%Y-%m-%d-%H-%M-%S")))
             except Exception as e:   
                 os.system("clear")
                 print(f"Error connection with {device_info['ip']}\n")
