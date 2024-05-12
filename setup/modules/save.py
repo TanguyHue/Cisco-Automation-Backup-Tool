@@ -8,6 +8,7 @@ class saver:
 
     def save_setup(self, interface, daemon, delay_hour, delay_minute, 
                    device_location, backup_location, crontab_location):
+        self.devices_file = device_location
         setup = {
             "interface": interface.get_json(),
 
