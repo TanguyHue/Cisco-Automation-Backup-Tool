@@ -29,7 +29,9 @@ class compareClass:
             with open(f"{backup_file}/{backup_location}/{device}/{sorted_files[backup_number]}", "r") as f:
                 self.f2 = f.read()
             self.backup_selected = f"{backup_file}/{backup_location}/{device}/{sorted_files[backup_number]}"
-            curses.wrapper(self.main)
+            response = curses.wrapper(self.main)
+            if response == 'upload':
+                backup(self.backup_selected, self.devices_list, False)
         except FileNotFoundError:
             return None, None
 
@@ -85,8 +87,7 @@ class compareClass:
             elif key == curses.KEY_UP and index > 0:
                 index -= 1
             elif key == ord('u'):
-                backup(self.backup_selected, self.devices_list, False)
-                break
+                return 'upload'
             elif key == ord('q'):
                 self.f1 = None
                 self.f2 = None

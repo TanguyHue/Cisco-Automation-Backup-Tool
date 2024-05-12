@@ -1,10 +1,15 @@
+from difflib import unified_diff
 from json import load
+import json
 import os
 import threading
-from time import strftime, sleep
+from time import localtime, strftime, sleep, strptime, time
 from crontab import CronTab
 import sys
-from netmiko import ConnectHandler
+from netmiko import ConnectHandler, file_transfer
+from menu.list_menu import item_menu
+from setup.modules.list import listClass as list
+import curses
 
 def backup(backup_location, devices_file, save_backup):
     if save_backup:
@@ -81,17 +86,119 @@ def backup(backup_location, devices_file, save_backup):
                     input("Press enter to continue")
         save_backup(device, backup_location).run()
     else:
-        try:
-            with open(backup_location, 'r') as f:
-                #net_connect = netmiko.ConnectHandler(**device)
-                #net_connect.enable()
-                #for command in f:
-                #    output = net_connect.send_config_set(command)
-                #    print(output)
-                #net_connect.disconnect()
-                print(f"Configuration of {device_info['mac']} done")
-        except FileExistsError:
-            print("File not found")
+        os.system("clear")
+        print(f"You choose to upload the save {backup_location.split('/')[-1]} for the device {device['ip']}\n")
+        print('You have two possibilities to upload the save:')
+        print('- You can make line per line:')
+        print('    This method will skip lines about SSH to avoid to stop the connection.')
+        print(f"    If the connection between this device and {device['ip']} is stop due to the new parameters, it can cause trouble.")
+        print('- You can copy this save in the startup-config file:')
+        print('    This method will avoid to stop the connection during the transfer.')
+        print('    After transfer done, the reboot command will be send and during the rebooting, the device will not working')
+        print(f"    At the end, you will maybe need to connecting directly to {device['ip']} for finishing the rebooting\n")
+        input('Press enter to continue')
+        choices = [
+            item_menu('Line per line', 0),
+            item_menu('Copy to startup-config', 1),
+            item_menu('Back', 2)
+        ]
+        liste = list(choices, 'Choose upload for ' + backup_location.split('/')[-1], True, False)
+        curses.wrapper(liste.executer)
+        selected_item = [item for item, checked in zip(liste.items, liste.checked) if checked][0].get_value()
+
+        if selected_item == 0:
+            file_upload = 0
+            list_files = os.listdir(backup_location.split('/')[:-1])
+            list_files = [file for file in list_files if file.endswith(".ios")]
+        
+            def get_date(filename):
+                return strptime(filename[:-4], "%Y-%m-%d-%H-%M-%S")
+
+            sorted_files = sorted(list_files, key=get_date, reverse=True)
+            last_backup_location = f"{backup_location.split('/')[:-1]}/{sorted_files[0]}"
+            is_last_backup = last_backup_location == backup_location
+            if is_last_backup:
+                print('The selected file is the last backup, the current configuration will be getted\n')
+                print('After the backup, the selected file will be set as the current time\n')
+                try:
+                    net_connect = ConnectHandler(**device)
+                    net_connect.enable()
+                    output = net_connect.send_command('show running-config')
+                    net_connect.disconnect()
+                    # Set 5 seconds before the current time to avoid to have the same time
+                    current_time = strftime("%Y-%m-%d-%H-%M-%S", localtime(time() - 5)) 
+                    
+                    if not os.path.exists(backup_location):
+                        os.makedirs(backup_location)
+                    with open(f"{backup_location}/{current_time}.ios", 'w') as f:
+                        f.write(output)
+                    last_backup_location = f"{backup_location}/{current_time}.ios"
+                    
+                except Exception as e:   
+                    os.system("clear")
+                    print(f"Error backing up {device_info['ip']}\n")
+                    print(e)
+                    input("Press enter to continue")
+            last_backup = 0
+            with open(last_backup_location, "r") as f:
+                last_backup = f.read()
+            file = 0
+            with open(backup_location, "r") as f:
+                file = f.read()
+            if is_last_backup:
+                # Rename the backup selected with the current time
+                os.rename(backup_location, backup_location.replace(backup_location.split('/')[-1].split('.')[0], strftime("%Y-%m-%d-%H-%M-%S")))
+            diff = unified_diff(last_backup.splitlines(), file.splitlines(), n=20)
+            diff_lines = list(diff)[3:]
+            filtered_diff = [line for line in diff_lines if not line.startswith("@@")]
+
+            for line in filtered_diff:
+                if line.startswith("+"):
+                    file_upload.append(line[1:])
+                elif line.startswith("-"):
+                    file_upload.append("no " + line[1:])
+                else:
+                    file_upload.append(line)
+
+            try:
+                with open(backup_location, 'r') as f:
+                    net_connect = ConnectHandler(**device)
+                    net_connect.enable()
+                    for command in file_upload:
+                        output = net_connect.send_config_set(command)
+                        print(output)
+                    net_connect.disconnect()
+                    print(f"Configuration of {device_info['mac']} done")
+            except Exception as e:   
+                os.system("clear")
+                print(f"Error connection with {device_info['ip']}\n")
+                print(e)
+                input("Press enter to continue")
+        if selected_item == 1:
+            source_file = backup_location
+            destination_file = "startup-config"
+            try:
+                connection = ConnectHandler(**device)
+                transfer_dict = file_transfer(
+                        connection,
+                        source_file=source_file,
+                        dest_file=destination_file,
+                        overwrite_file=True,
+                    )
+                print(transfer_dict)
+                connection.enable()  
+
+                output = connection.send_command_timing("reload", expect_string=r"confirm")
+                output += connection.send_command_timing("yes", expect_string=r"confirm")
+                output += connection.send_command_timing("\n")
+                print(output)
+
+                connection.disconnect()
+            except Exception as e:   
+                os.system("clear")
+                print(f"Error connection with {device_info['ip']}\n")
+                print(e)
+                input("Press enter to continue")
 
 def save_cron(mac_address_list = [], enter = True):
     if enter:
@@ -180,4 +287,3 @@ if __name__ == '__main__':
             backup(backup_location, devices_file, False)
     else:
         print("Error: Invalid arguments")
-
