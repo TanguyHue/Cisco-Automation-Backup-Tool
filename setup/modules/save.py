@@ -22,6 +22,16 @@ class saver:
         
         if not os.path.exists(os.path.dirname(self.setup_file)):
             os.makedirs(os.path.dirname(self.setup_file))
+            with open(os.path.dirname(self.setup_file) + 'type_available.json', 'w') as f:
+                json.dump([
+                    {
+                        "name": "Cisco IOS",
+                        "value": "cisco_ios"
+                    },
+                    {
+                        "name": "Other",
+                        "value": "other"
+                    },], f, indent=4)
         with open(self.setup_file, 'w') as f:
             json.dump(setup, f, indent=4)
 
@@ -29,6 +39,16 @@ class saver:
         devices = [device.get_info() for device in devices]
         if not os.path.exists(os.path.dirname(self.devices_file)):
             os.makedirs(os.path.dirname(self.devices_file))
+            with open(os.path.dirname(self.devices_file) + 'type_available.json', 'w') as f:
+                json.dump([
+                    {
+                        "name": "Cisco IOS",
+                        "value": "cisco_ios"
+                    },
+                    {
+                        "name": "Other",
+                        "value": "other"
+                    },], f, indent=4)
         with open(self.devices_file, 'w') as f:
             json.dump(devices, f, indent=4)
 
