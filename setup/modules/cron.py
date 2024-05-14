@@ -1,6 +1,7 @@
+#!/usr/bin/python3
+
 from difflib import unified_diff
 from json import load
-import json
 import os
 import threading
 from time import localtime, strftime, sleep, strptime, time
@@ -65,14 +66,15 @@ def backup(backup_location, devices_file, save_backup):
                     net_connect.enable()
                     output = net_connect.send_command(command)
                     print(f"{command}:\n{output[:10]}...\n")
-                    net_connect.disconnect()          
+                    net_connect.disconnect()   
+                    output = '\n'.join(output.splitlines()[10:])       
                     self.test_connection = True
                     thread.join()
                     current_time = strftime("%Y-%m-%d-%H-%M-%S")
                     
-                    if not os.path.exists(backup_location):
-                        os.makedirs(backup_location)
-                    with open(f"{backup_location}/{current_time}.ios", 'w') as f:
+                    if not os.path.exists('/'.join(backup_location.split('/')[:-1]) + '/' + backup_location.split('/')[-1].replace(':', '-')):
+                        os.makedirs('/'.join(backup_location.split('/')[:-1]) + '/' + backup_location.split('/')[-1].replace(':', '-'))
+                    with open(f"{'/'.join(backup_location.split('/')[:-1]) + '/' + backup_location.split('/')[-1].replace(':', '-')}/{current_time}.ios", 'w') as f:
                         f.write(output)
                     log_save = '/'.join(backup_location.split('/')[:-1]) + '/' + backup_location.split('/')[-1].replace(':', '-') + "/log_save.txt"
                     with open(log_save, 'a') as f:
@@ -162,11 +164,11 @@ def backup(backup_location, devices_file, save_backup):
                 with open(backup_location, 'r') as f:
                     net_connect = ConnectHandler(**device)
                     net_connect.enable()
-                    for command in file_upload:
-                        output = net_connect.send_config_set(command)
-                        print(output)
+                    output = net_connect.send_config_set(file_upload)
+                    print(output)
                     net_connect.disconnect()
                     print(f"Configuration of {device_info['mac']} done")
+                    input("Press enter to continue")
                 # Rename the backup selected with the current time
                 os.rename(backup_location, backup_location.replace(backup_location.split('/')[-1].split('.')[0], strftime("%Y-%m-%d-%H-%M-%S")))
             except Exception as e:   
@@ -180,6 +182,7 @@ def backup(backup_location, devices_file, save_backup):
             destination_file = "startup-config"
             try:
                 connection = ConnectHandler(**device)
+                connection.enable()  
                 transfer_dict = file_transfer(
                         connection,
                         source_file=source_file,
@@ -187,7 +190,6 @@ def backup(backup_location, devices_file, save_backup):
                         overwrite_file=True,
                     )
                 print(transfer_dict)
-                connection.enable()  
 
                 output = connection.send_command_timing("reload", expect_string=r"confirm")
                 output += connection.send_command_timing("yes", expect_string=r"confirm")
@@ -223,8 +225,8 @@ def save_cron(mac_address_list = [], enter = True):
 
         if delay_hour == 0:
             delay_hour = '*'
-        job = cron.new(command=f'cd {current_location} && python3 {current_location}/setup/modules/cron.py 0 {mac_address}')
-        job.setall(f'{delay_minute} {delay_hour} * * *')
+        job = cron.new(command=f'root {current_location}/setup/modules/cron.py 0 {mac_address}')
+        job.setall(f'*/{delay_minute} {delay_hour} * * *')
         job.set_comment(f'Cisco automation tool: {mac_address} backup')
         cron.write()
         if enter:
@@ -262,7 +264,7 @@ def add_daemon():
         return
     cron = CronTab(tabfile=crontab_location)
     cron.write()
-    job = cron.new(command=f'python3 {os.getcwd()}/daemon_module/modules/daemonClass.py')
+    job = cron.new(command=f'root {os.getcwd()}/daemon_module/modules/daemonClass.py')
     job.setall('@reboot')
     job.set_comment(f'Daemon reboot of Cisco Automation Tool')
     cron.write()
